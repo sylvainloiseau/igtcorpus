@@ -1,0 +1,17 @@
+Metadata-Version: 2.1
+Name: igt-tools-sylvainloiseau
+Version: 0.1.0
+Summary: Modeling fieldwork metadata with RDF
+Home-page: https://gitlab.univ-paris13.fr/sylvain.loiseau/igt-tools
+Author: Sylvain Loiseau
+Author-email: sylvain.loiseau@univ-paris13.fr
+License: UNKNOWN
+Project-URL: Bug Tracker, https://gitlab.univ-paris13.fr/sylvain.loiseau/igt-tools
+Description: Utility for IGT (interlinear glossed texts).
+        
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown

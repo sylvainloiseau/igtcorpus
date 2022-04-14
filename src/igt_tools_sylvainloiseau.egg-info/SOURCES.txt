@@ -1,0 +1,7 @@
+README.md
+pyproject.toml
+setup.py
+src/igt_tools_sylvainloiseau.egg-info/PKG-INFO
+src/igt_tools_sylvainloiseau.egg-info/SOURCES.txt
+src/igt_tools_sylvainloiseau.egg-info/dependency_links.txt
+src/igt_tools_sylvainloiseau.egg-info/top_level.txt
