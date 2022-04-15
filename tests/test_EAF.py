@@ -9,5 +9,5 @@ class TestEAF():
     obj = EAF2IGT("tests/data/BEJ_MV_CONV_01_RICH.EAF")
     #pp.pprint(obj.paragraphs)
     igt = obj.get_igt()
-    igt.to_emeld("tests/data/test.emeld", ["source"], ["speaker"], ["ft", "participant", "id"], [], ["txt", "gls", "id"])
+    igt.to_emeld("tests/data/BEJ_MV_CONV_01_RICH.emeld.xml", {'text':["source"], 'paragraph':["speaker"], 'sentence':["ft", "participant", "id"], 'word':[], 'morph':["txt", "gls", "id"]})
   
