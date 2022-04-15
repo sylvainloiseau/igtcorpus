@@ -1,8 +1,10 @@
 import pympi
 from igttools.IGT import IGT
-
+from typing import Union, List, Tuple, Dict
 
 class EAF2IGT():
+
+  Morph = Dict[str: str]
 
   """
   Turn a set of python hashtable (dict), describing annotations, as
@@ -233,7 +235,7 @@ class EAF2IGT():
       p = [x[1] for x in v if len(x) > 1]
       return(set(p))
 
-  def _get_words(self, word_ids, mb_ids_by_word_ids, mb_by_mb_ids, ge_by_mb_ids):
+  def _get_words(self, word_ids, mb_ids_by_word_ids, mb_by_mb_ids, ge_by_mb_ids) -> List[Dict[str -> [Morph]]:
       words = list()
       for word_id in word_ids:
         word = dict()
@@ -248,7 +250,7 @@ class EAF2IGT():
                   "gls" : ge_by_mb_ids[mb_id] if mb_id in ge_by_mb_ids else None,
                   "id" :  mb_id
                 }
-    		      )
+    	      )
         words.append(word)
       return words
 
