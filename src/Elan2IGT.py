@@ -1,4 +1,6 @@
 import pympi
+from igttools.IGT import IGT
+
 
 class EAF2IGT():
 

@@ -8,7 +8,7 @@ setuptools.setup(
     author_email="sylvain.loiseau@univ-paris13.fr",
     author="Sylvain Loiseau",
     version="0.1.0",
-    description="Modeling fieldwork metadata with RDF",
+    description="Importer for IGT (interlinear glossed texts).",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://gitlab.univ-paris13.fr/sylvain.loiseau/igt-tools",
@@ -20,8 +20,9 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    package_dir={"": "src"},
-    packages=setuptools.find_packages(where="src"),
+    package_dir={"igttools": "src"},
+    packages=["igttools"],
+    #packages=setuptools.find_packages(where="src"),
     python_requires=">=3.6",
 )
 

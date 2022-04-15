@@ -34,7 +34,7 @@ class IGT():
   }
   """
 
-  ORDERED_LEVEL = ["paragraphs", "sentences", "words", "morphemes"}
+  ORDERED_LEVEL = ["paragraphs", "sentences", "words", "morphemes"]
 
   def __init__(self, text):
     self.text = text
