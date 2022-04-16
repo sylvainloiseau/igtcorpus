@@ -1,5 +1,8 @@
 import setuptools
 
+# https://packaging.python.org/en/latest/discussions/install-requires-vs-requirements/
+# https://python-packaging.readthedocs.io/en/latest/dependencies.html
+
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
@@ -23,6 +26,14 @@ setuptools.setup(
     package_dir={"igttools": "src"},
     packages=["igttools"],
     #packages=setuptools.find_packages(where="src"),
+    install_requires=[
+          'markdown',
+          'pytest==6.2.5',
+          'pympi-ling==1.70.2',
+          'xmltodict==0.12.0'
+    ],
+    # For dependencies not on pyPI:
+    #dependency_links=['http://github.com/user/repo/tarball/master#egg=package-1.0']
     python_requires=">=3.6",
 )
 
