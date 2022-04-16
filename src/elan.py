@@ -1,8 +1,8 @@
 import pympi
-from igttools.IGT import IGT
+from igttools.igt import IGT
 from typing import Union, List, Tuple, Dict, Set
 
-class EAF2IGT():
+class ElanCorpoAfr():
 
   Morph = Dict[str, str]
   Word = Dict[str, Union[str, List[Morph]]]

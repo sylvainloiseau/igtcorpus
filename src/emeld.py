@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 from pathlib import Path
 import xmltodict
-from igttools.IGT import IGT
+from igttools.igt import IGT
 from typing import Union, List, Tuple, Dict, Any
 from collections import OrderedDict
 import pprint as pp
