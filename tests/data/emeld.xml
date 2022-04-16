@@ -1,0 +1,523 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+  <interlinear-text>
+    <item type="source">tests/data/BEJ_MV_CONV_01_RICH.EAF</item>
+    <paragraphs>
+      <paragraph>
+        <item type="speaker">SP1</item>
+        <sentences>
+          <sentence>
+            <item type="ft">Er,</item>
+            <item type="participant">SP1</item>
+            <item type="id">a4931</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt">əəə</item>
+                    <item type="gls">er</item>
+                    <item type="id">a15525</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt">/</item>
+                    <item type="gls">None</item>
+                    <item type="id">a15526</item>
+                  </morph>
+                </morphemes>
+              </word>
+            </words>
+          </sentence>
+          <sentence>
+            <item type="ft"/>
+            <item type="participant">SP1</item>
+            <item type="id">a4932</item>
+            <words>
+              <word>
+                <morphemes/>
+              </word>
+            </words>
+          </sentence>
+          <sentence>
+            <item type="ft">In the old days</item>
+            <item type="participant">SP1</item>
+            <item type="id">a4933</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt">suːr</item>
+                    <item type="gls">before</item>
+                    <item type="id">a15527</item>
+                  </morph>
+                  <morph>
+                    <item type="txt">-eː</item>
+                    <item type="gls">-GEN.PL</item>
+                    <item type="id">a15528</item>
+                  </morph>
+                  <morph>
+                    <item type="txt">-n</item>
+                    <item type="gls">-L</item>
+                    <item type="id">a15529</item>
+                  </morph>
+                  <morph>
+                    <item type="txt">-eː</item>
+                    <item type="gls">-GEN.PL</item>
+                    <item type="id">a15530</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt">i=</item>
+                    <item type="gls">DEF.M=</item>
+                    <item type="id">a15531</item>
+                  </morph>
+                  <morph>
+                    <item type="txt">damaːn</item>
+                    <item type="gls">time</item>
+                    <item type="id">a15532</item>
+                  </morph>
+                  <morph>
+                    <item type="txt">=iːb</item>
+                    <item type="gls">=LOC.SG</item>
+                    <item type="id">a15533</item>
+                  </morph>
+                  <morph>
+                    <item type="txt">/</item>
+                    <item type="gls">.</item>
+                    <item type="id">a15534</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes/>
+              </word>
+            </words>
+          </sentence>
+          <sentence>
+            <item type="ft"/>
+            <item type="participant">SP1</item>
+            <item type="id">a4934</item>
+            <words>
+              <word>
+                <morphemes/>
+              </word>
+            </words>
+          </sentence>
+          <sentence>
+            <item type="ft">there was a wealthy man, they said.</item>
+            <item type="participant">SP1</item>
+            <item type="id">a4935</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt">gab</item>
+                    <item type="gls">be_rich</item>
+                    <item type="id">a15535</item>
+                  </morph>
+                  <morph>
+                    <item type="txt">-a</item>
+                    <item type="gls">-CVB.MNR</item>
+                    <item type="id">a15536</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt">ahaː</item>
+                    <item type="gls">ahaː</item>
+                    <item type="id">a15537</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt">tak</item>
+                    <item type="gls">man</item>
+                    <item type="id">a15538</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt">iː-</item>
+                    <item type="gls">3SG.M-</item>
+                    <item type="id">a15539</item>
+                  </morph>
+                  <morph>
+                    <item type="txt">fi</item>
+                    <item type="gls">be_there\AOR</item>
+                    <item type="id">a15540</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt">eːn</item>
+                    <item type="gls">say\PFV.3PL</item>
+                    <item type="id">a15541</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt">//</item>
+                    <item type="gls">.</item>
+                    <item type="id">a15542</item>
+                  </morph>
+                </morphemes>
+              </word>
+            </words>
+          </sentence>
+          <sentence>
+            <item type="ft"/>
+            <item type="participant">SP1</item>
+            <item type="id">a4936</item>
+            <words>
+              <word>
+                <morphemes/>
+              </word>
+            </words>
+          </sentence>
+          <sentence>
+            <item type="ft">This man</item>
+            <item type="participant">SP1</item>
+            <item type="id">a4937</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt">uːn</item>
+                    <item type="gls">PROX.SG.M.NOM</item>
+                    <item type="id">a15543</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt">uː=</item>
+                    <item type="gls">DEF.SG.M.NOM=</item>
+                    <item type="id">a15544</item>
+                  </morph>
+                  <morph>
+                    <item type="txt">tak</item>
+                    <item type="gls">man</item>
+                    <item type="id">a15545</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt">/</item>
+                    <item type="gls">.</item>
+                    <item type="id">a15546</item>
+                  </morph>
+                </morphemes>
+              </word>
+            </words>
+          </sentence>
+          <sentence>
+            <item type="ft"/>
+            <item type="participant">SP1</item>
+            <item type="id">a4938</item>
+            <words>
+              <word>
+                <morphemes/>
+              </word>
+            </words>
+          </sentence>
+          <sentence>
+            <item type="ft">was really rich and</item>
+            <item type="participant">SP1</item>
+            <item type="id">a4939</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt">gab</item>
+                    <item type="gls">be_rich</item>
+                    <item type="id">a15547</item>
+                  </morph>
+                  <morph>
+                    <item type="txt">-a</item>
+                    <item type="gls">-CVB.MNR</item>
+                    <item type="id">a15548</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt">ah</item>
+                    <item type="gls">take</item>
+                    <item type="id">a15549</item>
+                  </morph>
+                  <morph>
+                    <item type="txt">-a</item>
+                    <item type="gls">-CVB.MNR</item>
+                    <item type="id">a15550</item>
+                  </morph>
+                  <morph>
+                    <item type="txt">=b</item>
+                    <item type="gls">=INDF.M.ACC</item>
+                    <item type="id">a15551</item>
+                  </morph>
+                  <morph>
+                    <item type="txt">=u</item>
+                    <item type="gls">=COP.3SG</item>
+                    <item type="id">a15552</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt">/</item>
+                    <item type="gls">.</item>
+                    <item type="id">a15553</item>
+                  </morph>
+                </morphemes>
+              </word>
+            </words>
+          </sentence>
+          <sentence>
+            <item type="ft"/>
+            <item type="participant">SP1</item>
+            <item type="id">a4940</item>
+            <words>
+              <word>
+                <morphemes/>
+              </word>
+            </words>
+          </sentence>
+          <sentence>
+            <item type="ft">then,</item>
+            <item type="participant">SP1</item>
+            <item type="id">a9092</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt">areː</item>
+                    <item type="gls">then</item>
+                    <item type="id">a15554</item>
+                  </morph>
+                </morphemes>
+              </word>
+            </words>
+          </sentence>
+          <sentence>
+            <item type="ft">all the people around him</item>
+            <item type="participant">SP1</item>
+            <item type="id">a4941</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt">i=</item>
+                    <item type="gls">DEF.M=</item>
+                    <item type="id">a15555</item>
+                  </morph>
+                  <morph>
+                    <item type="txt">hawaːleːn</item>
+                    <item type="gls">surrounding</item>
+                    <item type="id">a15556</item>
+                  </morph>
+                  <morph>
+                    <item type="txt">=aː</item>
+                    <item type="gls">=POSS.3PL.NOM</item>
+                    <item type="id">a15557</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt">uː=</item>
+                    <item type="gls">DEF.SG.M.NOM=</item>
+                    <item type="id">a15558</item>
+                  </morph>
+                  <morph>
+                    <item type="txt">dheːj</item>
+                    <item type="gls">people</item>
+                    <item type="id">a15559</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt">kass</item>
+                    <item type="gls">all</item>
+                    <item type="id">a15560</item>
+                  </morph>
+                  <morph>
+                    <item type="txt">=uː</item>
+                    <item type="gls">=POSS.3SG.NOM</item>
+                    <item type="id">a15561</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt">/</item>
+                    <item type="gls">.</item>
+                    <item type="id">a15562</item>
+                  </morph>
+                </morphemes>
+              </word>
+            </words>
+          </sentence>
+          <sentence>
+            <item type="ft"/>
+            <item type="participant">SP1</item>
+            <item type="id">a4942</item>
+            <words>
+              <word>
+                <morphemes/>
+              </word>
+            </words>
+          </sentence>
+          <sentence>
+            <item type="ft">nothing</item>
+            <item type="participant">SP1</item>
+            <item type="id">a9093</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt">naː</item>
+                    <item type="gls">thing</item>
+                    <item type="id">a15563</item>
+                  </morph>
+                  <morph>
+                    <item type="txt">=t</item>
+                    <item type="gls">=INDF.F</item>
+                    <item type="id">a15564</item>
+                  </morph>
+                  <morph>
+                    <item type="txt">/</item>
+                    <item type="gls">.</item>
+                    <item type="id">a15565</item>
+                  </morph>
+                </morphemes>
+              </word>
+            </words>
+          </sentence>
+          <sentence>
+            <item type="ft">they were poor people who had</item>
+            <item type="participant">SP1</item>
+            <item type="id">a4943</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt">ba=</item>
+                    <item type="gls">NEG.OPT=</item>
+                    <item type="id">a15566</item>
+                  </morph>
+                  <morph>
+                    <item type="txt">a-</item>
+                    <item type="gls">1SG-</item>
+                    <item type="id">a15567</item>
+                  </morph>
+                  <morph>
+                    <item type="txt">bari</item>
+                    <item type="gls">have\OPT</item>
+                    <item type="id">a15568</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt">dheːj</item>
+                    <item type="gls">people</item>
+                    <item type="id">a15569</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt">miskiːn</item>
+                    <item type="gls">poor</item>
+                    <item type="id">a15570</item>
+                  </morph>
+                  <morph>
+                    <item type="txt">-a</item>
+                    <item type="gls">-PL</item>
+                    <item type="id">a15571</item>
+                  </morph>
+                  <morph>
+                    <item type="txt">=b</item>
+                    <item type="gls">=INDF.M.ACC</item>
+                    <item type="id">a15572</item>
+                  </morph>
+                  <morph>
+                    <item type="txt">=a</item>
+                    <item type="gls">=COP.3PL</item>
+                    <item type="id">a15573</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt">//</item>
+                    <item type="gls">.</item>
+                    <item type="id">a15574</item>
+                  </morph>
+                </morphemes>
+              </word>
+            </words>
+          </sentence>
+        </sentences>
+      </paragraph>
+      <paragraph>
+        <item type="speaker">SP2</item>
+        <sentences>
+          <sentence>
+            <item type="ft"/>
+            <item type="participant">SP2</item>
+            <item type="id">ann217</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt">mmm</item>
+                    <item type="gls">mmm</item>
+                    <item type="id">a10103</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt">/</item>
+                    <item type="gls">.</item>
+                    <item type="id">a10104</item>
+                  </morph>
+                </morphemes>
+              </word>
+            </words>
+          </sentence>
+        </sentences>
+      </paragraph>
+    </paragraphs>
+  </interlinear-text>
+</document>

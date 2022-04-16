@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+  <interlinear-text>
+    <item type="source">tests/data/BEJ_MV_CONV_01_RICH.EAF</item>
+    <paragraphs>
+      <paragraph>
+        <item type="speaker">SP1</item>
+        <sentences>
+          <sentence>
+            <item type="ft"/>
+            <item type="participant">SP1</item>
+            <item type="id">a4932</item>
+            <words>
+              <word>
+                <morphemes/>
+              </word>
+            </words>
+          </sentence>
+          <sentence>
+            <item type="ft">In the old days</item>
+            <item type="participant">SP1</item>
+            <item type="id">a4933</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt">suːr</item>
+                    <item type="gls">before</item>
+                    <item type="id">a15527</item>
+                  </morph>
+                  <morph>
+                    <item type="txt">-eː</item>
+                    <item type="gls">-GEN.PL</item>
+                    <item type="id">a15528</item>
+                  </morph>
+                  <morph>
+                    <item type="txt">-n</item>
+                    <item type="gls">-L</item>
+                    <item type="id">a15529</item>
+                  </morph>
+                  <morph>
+                    <item type="txt">-eː</item>
+                    <item type="gls">-GEN.PL</item>
+                    <item type="id">a15530</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt">i=</item>
+                    <item type="gls">DEF.M=</item>
+                    <item type="id">a15531</item>
+                  </morph>
+                </morphemes>
+              </word>
+            </words>
+          </sentence>
+        </sentences>
+      </paragraph>
+    </paragraphs>
+  </interlinear-text>
+</document>
