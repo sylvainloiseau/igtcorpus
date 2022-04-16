@@ -1,10 +1,13 @@
 import pympi
 from igttools.IGT import IGT
-from typing import Union, List, Tuple, Dict
+from typing import Union, List, Tuple, Dict, Set
 
 class EAF2IGT():
 
-  Morph = Dict[str: str]
+  Morph = Dict[str, str]
+  Word = Dict[str, Union[str, List[Morph]]]
+  Sentence = Dict[str, Union[str, List[Word]]]
+  Paragraph = Dict[str, Union[str, List[Sentence]]]
 
   """
   Turn a set of python hashtable (dict), describing annotations, as
@@ -230,12 +233,12 @@ class EAF2IGT():
     }
     return res
 
-  def _get_participants(self):
+  def _get_participants(self) -> Set[str]:
       v = [x.split("@") for x in self.eafob.tiers.keys()]
       p = [x[1] for x in v if len(x) > 1]
       return(set(p))
 
-  def _get_words(self, word_ids, mb_ids_by_word_ids, mb_by_mb_ids, ge_by_mb_ids) -> List[Dict[str -> [Morph]]:
+  def _get_words(self, word_ids, mb_ids_by_word_ids, mb_by_mb_ids, ge_by_mb_ids) -> List[Word]:
       words = list()
       for word_id in word_ids:
         word = dict()
@@ -254,7 +257,7 @@ class EAF2IGT():
         words.append(word)
       return words
 
-  def _get_sentences(self, participant_name):
+  def _get_sentences(self, participant_name) -> List[Sentence]:
     sentences = []
     participant_ids = self.ids[participant_name]
     for sentence_id in participant_ids["ft_by_ref_ids"].keys():

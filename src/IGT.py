@@ -57,7 +57,7 @@ class IGT():
       """
       pass
 
-  def get_property_by_level(self) -> Dict[str, List[str]]:
+  def get_properties_by_level(self) -> Dict[str, List[str]]:
     """
     extract for each level the list of the properties in the data.
     For instance below sentences have property "field_x", words have property
