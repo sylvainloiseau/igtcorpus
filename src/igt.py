@@ -1,4 +1,9 @@
-from typing import Dict, List
+from typing import Dict, List, Union
+
+Morph = Dict[str, str]
+Word = Dict[str, Union[str, List[Morph]]]
+Sentence = Dict[str, Union[str, List[Word]]]
+Paragraph = Dict[str, Union[str, List[Sentence]]]
 
 class IGT():
 

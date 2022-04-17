@@ -1,14 +1,9 @@
 import pympi
-from igttools.igt import IGT
+from igttools.igt import IGT, Paragraph, Sentence, Word, Morph
 from typing import Union, List, Tuple, Dict, Set
 
 class ElanCorpoAfr():
-
-  Morph = Dict[str, str]
-  Word = Dict[str, Union[str, List[Morph]]]
-  Sentence = Dict[str, Union[str, List[Word]]]
-  Paragraph = Dict[str, Union[str, List[Sentence]]]
-
+ 
   """
   Turn a set of python hashtable (dict), describing annotations, as
   produced by pympi into an IGT (hierachy of sentences, word, morphs)
@@ -142,12 +137,16 @@ class ElanCorpoAfr():
 
     self.paragraphs = paragraphs
 
-  def get_igt(self):
+  def get_igt(self) -> IGT:
       return(IGT({"source" : self.filename, "paragraphs": self.paragraphs}))
 
-  def _make_paragraphs_with_speaker(self, sentences):
+  def _make_paragraphs_with_speaker(self, sentences : List[Sentence]) -> List[Paragraph]:
     """
     Group consecutive sentences by same speaker into paragraph
+
+    :param List[Sentence] sentences: the sentence to be grouped. Sentence must have a "participant" slot.
+    
+    :return a list of Paragraph
     """
     paragraphs = []
     current_paragraph = dict()
@@ -165,14 +164,14 @@ class ElanCorpoAfr():
         current_paragraph["sentences"].append(s)
     return(paragraphs)
             
-  def _order_sentences(self, sentences):
+  def _order_sentences(self, sentences : List[Sentence]) -> List[Sentence]:
       sorted_sentences = sorted(
           sentences,
           key=lambda x : self.eafob.timeslots[ x["timestamp"][0] ]
         )
       return(sorted_sentences)
   
-  def _get_ids_by_participant(self, participant):
+  def _get_ids_by_participant(self, participant : str) -> Dict[str, Dict[str, str]]:
     mb_tier = "mb" + "@" + participant
     ge_tier = "ge" + "@" + participant
     mot_tier = "mot" + "@" + participant
@@ -257,7 +256,7 @@ class ElanCorpoAfr():
         words.append(word)
       return words
 
-  def _get_sentences(self, participant_name) -> List[Sentence]:
+  def _get_sentences(self, participant_name: str) -> List[Sentence]:
     sentences = []
     participant_ids = self.ids[participant_name]
     for sentence_id in participant_ids["ft_by_ref_ids"].keys():
@@ -282,7 +281,7 @@ class ElanCorpoAfr():
                   participant_ids["ge_by_mb_ids"]
                   )
           sentence["words"] = words
-      
+
       sentences.append(sentence)
     return(sentences)
 

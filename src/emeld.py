@@ -18,6 +18,8 @@ class Emeld():
   def read(cls, filename: str) -> IGT:
     """
     Read an emeld document and turn it into an IGT object
+    :param str filename: the XML Emeld document
+    :rtype: IGT
     """
     p = Path(filename)
     document = Path(filename).read_text()
@@ -35,11 +37,10 @@ class Emeld():
     "/document/interlinear-text/paragraphs/paragraph/phrases/phrase/words/word/morphemes/morph"
     actual content is in item element (with @type attr) under paragraph, phrase, word, morph.
 
-    :param igt
-
-    :param outfile: path ane name of the XML document to be created
-
-    :param fields: for each level (text, paragraph, sentence, word, morph), a list of the keys in the dict representing the unit of that level that will be turned into a <item> element in EMELD.
+    :param IGT igt:
+    :param str outfile: path ane name of the XML document to be created
+    :param dict fields: for each level (text, paragraph, sentence, word, morph), a list of the keys in the dict representing the unit of that level that will be turned into a <item> element in EMELD.
+    :rtype: None
 
     """
     root = ET.Element('document')
@@ -99,7 +100,4 @@ class Emeld():
           item_node = ET.SubElement(node, "item")
           item_node.set("type", field)
           item_node.text = str(obj[field])
-
-if __name__ == "__main__":
-    Emeld.read("test/data/tiny.emeld.xml")
 
