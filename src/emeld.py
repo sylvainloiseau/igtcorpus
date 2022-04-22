@@ -1,12 +1,19 @@
 import xml.etree.ElementTree as ET
 from pathlib import Path
 import xmltodict
-from igttools.igt import IGT
-from typing import Union, List, Tuple, Dict, Any
+from igttools.igt import Corpus, Text, Paragraph, Sentence, Word, Morph, Properties, LingUnit
+from typing import Union, Any, List, Tuple, Dict
 from collections import OrderedDict
 import pprint as pp
 
 class Emeld():
+    
+  ORDERED_LEVEL = [
+          ("document", "interlinear-text"),
+          ("paragraphs","paragraph"),
+          ("sentences","sentence"),
+          ("words","word"),
+          ("morphemes","morph")]
 
   """
   read IGT from document in Emeld-xml or write IGT into Emeld-XML
@@ -15,89 +22,147 @@ class Emeld():
   """
 
   @classmethod
-  def read(cls, filename: str) -> IGT:
+  def read(cls, filename: str) -> Corpus:
     """
     Read an emeld document and turn it into an IGT object
     :param str filename: the XML Emeld document
-    :rtype: IGT
+    :rtype: Corpus
     """
     p = Path(filename)
     document = Path(filename).read_text()
     d = xmltodict.parse(document)
-    text = Emeld._turn_xmltodict_to_igt(d["document"]["interlinear-text"], level_index=0)
-    return IGT(text)
+
+#    text = _walk_tree(text,
+#            level_index=0,
+#            item_fun=lambda x : [ x ] if isinstance(x, OrderedDict) else x,
+#            sub_level_fun=lambda x : [ x ] if isinstance(x, OrderedDict) else x
+#    )
+#    #text = Emeld._regularize_xmltodict(, level_index=0)
+#    text = _walk_tree(text,
+#            level_index=0,
+#            item_fun=lambda x : { (i['@type']: i['#text'] if '#text' in i else "" ) for i in x}
+#            sub_level_fun=lambda x : [x] if isinstance(x, OrderedDict) else x
+#    )
+
+    texts = Emeld._regularize_xmltodict(d, level_index=-1)
+    corpus = Emeld._turn_xmltodict_to_igt(texts, level_index=-1)
+    return corpus
     
   @classmethod
-  def write(cls, igt: IGT, outfile: str, fields={'text':[], 'paragraph':[], 'sentence':[], 'word':[], 'morph':[]}) -> None:
-    # : Dict[str, List[str]
-    # 
-    # igt.get_properties_by_level()
+  def write(cls, igt: Corpus, outfile: str) -> None:
     """
     Hierarchy in EMELD XML:
     "/document/interlinear-text/paragraphs/paragraph/phrases/phrase/words/word/morphemes/morph"
     actual content is in item element (with @type attr) under paragraph, phrase, word, morph.
 
-    :param IGT igt:
+    :param Corpus igt:
     :param str outfile: path ane name of the XML document to be created
-    :param dict fields: for each level (text, paragraph, sentence, word, morph), a list of the keys in the dict representing the unit of that level that will be turned into a <item> element in EMELD.
     :rtype: None
 
     """
+    # , fields={'text':[], 'paragraph':[], 'sentence':[], 'word':[], 'morph':[]}
+    # :param dict fields: for each level (text, paragraph, sentence, word, morph), a list of the keys in the dict representing the unit of that level that will be turned into a <item> element in EMELD.
     root = ET.Element('document')
-    text_node = ET.SubElement(root, 'interlinear-text')
-    Emeld._populate_with_item(igt.text, text_node, fields['text'])
-    paragraphs_node = ET.SubElement(text_node, 'paragraphs')
-    pp.pprint(igt.text)
-    Emeld._iterate_on_level_and_create_DOM(paragraphs_node, igt.text["paragraphs"], 1, fields)
+    Emeld._iterate_on_level_and_create_DOM(root, igt.get_units(), 0)
     tree = ET.ElementTree(root)
     with open(outfile, "wb") as f:
       tree.write(f, encoding="UTF-8", xml_declaration=True)
 
+#  @staticmethod
+#  def _walk_tree(level, level_index, item_fun = lambda x: x, sub_level_fun: lambda x: x):
+#      unit = {}
+#      """
+#      Recursively walk the three and apply function
+#      """
+#      if 'item' in level:
+#          unit['item'] = item_fun(level['item'])
+#      sub_level_list_name = Emeld.ORDERED_LEVEL[level_index + 1][0] 
+#      sub_level_name = Emeld.ORDERED_LEVEL[level_index + 1][1] 
+#      if (level_index + 1) < len(Emeld.ORDERED_LEVEL) and sub_level_list_name in level:
+#          if level[sub_level_list_name] is not None:
+#            unit[sub_level_list_name] = sub_level_fun(level[sub_level_list_name])
+#      return unit
+
   @staticmethod
-  def _turn_xmltodict_to_igt(level, level_index):
-      res = {}
+  def _regularize_xmltodict(level, level_index):
+      unit = {}
+      """
+      structure created by xmltodict contains either OrderedDict or List for a given key "x", depending on
+      whether there is one child element "x" or several child element "x". This
+      function turn all values associated to a key as list, be it a length-1 or
+      not.
+      """
       if 'item' in level:
-          items = []
           if isinstance(level['item'], OrderedDict):
-            items = [ level['item'] ]
+            unit["item"] = [ level['item'] ]
           else:
-            items = level['item']
-          for item in items:
-            res[item['@type']] = item['#text'] if '#text' in item else ""
-      if (level_index + 1) < len(IGT.ORDERED_LEVEL) and IGT.ORDERED_LEVEL[level_index + 1][0] in level:
+            unit["item"] = level['item']
+      if (level_index + 1) < len(Emeld.ORDERED_LEVEL) and Emeld.ORDERED_LEVEL[level_index + 1][0] in level:
           # Or create key if do not exist?
-          sub_level_list_name = IGT.ORDERED_LEVEL[level_index + 1][0] 
-          sub_level_name = IGT.ORDERED_LEVEL[level_index + 1][1] 
+          # not here anyway: all fields should also be created
+          sub_level_list_name = Emeld.ORDERED_LEVEL[level_index + 1][0] 
+          sub_level_name = Emeld.ORDERED_LEVEL[level_index + 1][1] 
           if level[sub_level_list_name] is not None  and sub_level_name in level[sub_level_list_name]:
-            sublevels_in = []
-            sublevels_out = []
             if isinstance(level[sub_level_list_name][sub_level_name], OrderedDict):
-                sublevels_in = [ level[sub_level_list_name][sub_level_name] ]
-            else:
-                sublevels_in = level[sub_level_list_name][sub_level_name]
-            #for sublevel in sublevels_in:
+                level[sub_level_list_name][sub_level_name] = [ level[sub_level_list_name][sub_level_name] ]
+            sublevels_in = level[sub_level_list_name][sub_level_name]
+            unit[sub_level_list_name] = {}
+            unit[sub_level_list_name][sub_level_name] = [ Emeld._regularize_xmltodict(sublevel, level_index + 1) for sublevel in sublevels_in]
+      return unit
+
+  @staticmethod
+  def _turn_xmltodict_to_igt(level: OrderedDict, level_index: int):
+      properties: Dict[str, str] = {}
+      sub_unit: List[LingUnit] = []
+      if 'item' in level:
+          items = level['item']
+          for item in items:
+            properties[ item['@type'] ] = item['#text'] if '#text' in item else ""
+      if (level_index + 1) < len(Emeld.ORDERED_LEVEL) and Emeld.ORDERED_LEVEL[level_index + 1][0] in level:
+          sub_level_list_name = Emeld.ORDERED_LEVEL[level_index + 1][0] 
+          sub_level_name =      Emeld.ORDERED_LEVEL[level_index + 1][1] 
+          if level[sub_level_list_name] is not None  and sub_level_name in level[sub_level_list_name]:
+            sublevels_in = level[sub_level_list_name][sub_level_name]
             sublevels_out = [ Emeld._turn_xmltodict_to_igt(sublevel, level_index + 1) for sublevel in sublevels_in]
-            res[sub_level_list_name] = sublevels_out
+            sub_unit = sublevels_out
+      res:LingUnit
+      if level_index == -1:
+          res = Corpus(properties, sub_unit)
+      elif level_index == 0:
+          res = Text(properties, sub_unit)
+      elif level_index == 1:
+          res = Paragraph(properties, sub_unit)
+      elif level_index == 2:
+          res = Sentence(properties, sub_unit)
+      elif level_index == 3:
+          res = Word(properties, sub_unit)
+      elif level_index == 4:
+          res = Morph(properties)
+      else:
+          raise ValueError('unknown level: ' + str(level_index))
       return res
 
   @staticmethod
-  def _iterate_on_level_and_create_DOM(parent_node, level: List[Dict[str, Any]], level_index: int, fields) -> None:
+  def _iterate_on_level_and_create_DOM(parent_node: ET.Element, level: List[LingUnit], level_index: int) -> None:
       """
       Iterate on all units of a given level (paragraphs, sentences, words, morphemes)
       """
       for unit in level:
-          unit_name =IGT.ORDERED_LEVEL[level_index][1]
+          unit_name = Emeld.ORDERED_LEVEL[level_index][1]
           unit_node = ET.SubElement(parent_node, unit_name)
-          Emeld._populate_with_item(unit, unit_node, fields[unit_name])
-          if (level_index+1) < len(IGT.ORDERED_LEVEL) and IGT.ORDERED_LEVEL[level_index+1][0] in unit:
-            # Or should the key always be present ?
-            sub_level_node = ET.SubElement(unit_node, IGT.ORDERED_LEVEL[level_index + 1][0])
-            Emeld._iterate_on_level_and_create_DOM(sub_level_node, unit[IGT.ORDERED_LEVEL[level_index+1][0]], level_index + 1, fields)
+          properties = unit.get_properties()
+          if properties is not None:
+              Emeld._populate_with_item(properties, unit_node)
+          if (level_index+1) < len(Emeld.ORDERED_LEVEL):
+            sub_units = unit.get_units()
+            if sub_units is not None:
+                sub_level_node = ET.SubElement(unit_node, Emeld.ORDERED_LEVEL[level_index + 1][0])
+                Emeld._iterate_on_level_and_create_DOM(sub_level_node, sub_units, level_index + 1)
 
   @staticmethod
-  def _populate_with_item(obj, node, fields):
-      for field in fields:
+  def _populate_with_item(obj, node):
+      for k, v in obj.items():
           item_node = ET.SubElement(node, "item")
-          item_node.set("type", field)
-          item_node.text = str(obj[field])
+          item_node.set("type", str(k))
+          item_node.text = str(v)
 

@@ -1,6 +1,6 @@
 import pympi
-from igttools.igt import IGT, Paragraph, Sentence, Word, Morph
-from typing import Union, List, Tuple, Dict, Set
+from igttools.igt import Corpus, Text, Paragraph, Sentence, Word, Morph, UnitFactory
+from typing import Union, List, Dict, Set
 
 class ElanCorpoAfr():
  
@@ -112,6 +112,7 @@ class ElanCorpoAfr():
     eafob = pympi.Elan.Eaf(filename)		
     self.filename = filename
     self.eafob = eafob
+    self.factory = UnitFactory()
 
     # the set of the participant (used as suffix on tier name: mb@SP1,
     # mb@SP2, etc).
@@ -137,8 +138,10 @@ class ElanCorpoAfr():
 
     self.paragraphs = paragraphs
 
-  def get_igt(self) -> IGT:
-      return(IGT({"source" : self.filename, "paragraphs": self.paragraphs}))
+  def get_igt(self) -> Corpus:
+      text = Text({"source" : self.filename}, self.paragraphs)
+      #fields = {'paragraph' : ["speaker"], 'morph' : ["txt", "gls", "id"], 'sentence' : ["id", "ft", "participant", "timestamp"]}
+      return(Corpus({}, [text]))
 
   def _make_paragraphs_with_speaker(self, sentences : List[Sentence]) -> List[Paragraph]:
     """
@@ -148,30 +151,28 @@ class ElanCorpoAfr():
     
     :return a list of Paragraph
     """
-    paragraphs = []
-    current_paragraph = dict()
-    current_paragraph["sentences"] = []
-    current_speaker = sentences[0]["participant"]
-    current_paragraph["speaker"] = current_speaker
+    paragraphs: List[Paragraph] = []
+    collected_sentences: List[Sentence] = []
+    current_speaker: str = sentences[0].get_properties()["participant"]
     for s in sentences:
-        speaker = s["participant"]
+        speaker = s.get_properties()["participant"]
         if speaker != current_speaker:
-            paragraphs.append(current_paragraph)
+            paragraphs.append(self.factory.createParagraph({"speaker": current_speaker}, collected_sentences))
             current_speaker = speaker
-            current_paragraph = dict()
-            current_paragraph["sentences"] = []
-            current_paragraph["speaker"] = current_speaker
-        current_paragraph["sentences"].append(s)
+            collected_sentences = []
+        collected_sentences.append(s)
+    if len(collected_sentences) > 0:
+        paragraphs.append(self.factory.createParagraph({"speaker": current_speaker}, collected_sentences))
     return(paragraphs)
             
   def _order_sentences(self, sentences : List[Sentence]) -> List[Sentence]:
       sorted_sentences = sorted(
           sentences,
-          key=lambda x : self.eafob.timeslots[ x["timestamp"][0] ]
+          key=lambda x : self.eafob.timeslots[ x.get_properties()["timestamp"][0] ]
         )
       return(sorted_sentences)
   
-  def _get_ids_by_participant(self, participant : str) -> Dict[str, Dict[str, str]]:
+  def _get_ids_by_participant(self, participant : str) -> Union[Dict[str, Dict[str, str]], None]:
     mb_tier = "mb" + "@" + participant
     ge_tier = "ge" + "@" + participant
     mot_tier = "mot" + "@" + participant
@@ -206,19 +207,19 @@ class ElanCorpoAfr():
     #  'a15527': ('a14882', 'suːr', None, None),
     #  'a15528': ('a14882', '-eː', 'a15527', None),
     # 
-    mb_ids_by_word_ids = {v[0]:[] for v in self.eafob.tiers[mb_tier][1].values()}
+    mb_ids_by_word_ids: Dict[str, List[str]] = {v[0]:[] for v in self.eafob.tiers[mb_tier][1].values()}
     for k,v in self.eafob.tiers[mb_tier][1].items():
       mb_ids_by_word_ids[v[0]].append(k)
     
-    words_ids_by_tx_id  = {v[0]:[] for v in self.eafob.tiers[mot_tier][1].values()}
+    words_ids_by_tx_id: Dict[str, List[str]]  = {v[0]:[] for v in self.eafob.tiers[mot_tier][1].values()}
     for k,v in self.eafob.tiers[mot_tier][1].items():
       words_ids_by_tx_id[v[0]].append(k)
 
-    tx_ids_by_ref_ids = dict()
+    tx_ids_by_ref_ids : Dict[str, str]= dict()
     for k, v in self.eafob.tiers[tx_tier][1].items():
       tx_ids_by_ref_ids[v[0]] = k
     
-    ft_by_ref_ids = dict()
+    ft_by_ref_ids : Dict[str, str] = dict()
     for v in self.eafob.tiers[ft_tier][1].values():
       ft_by_ref_ids[v[0]] = v[1]
 
@@ -240,32 +241,31 @@ class ElanCorpoAfr():
   def _get_words(self, word_ids, mb_ids_by_word_ids, mb_by_mb_ids, ge_by_mb_ids) -> List[Word]:
       words = list()
       for word_id in word_ids:
-        word = dict()
-        word["morphemes"] = []
+        item: Dict[str, str] = dict()
+        morphemes: List[Morph] = []
         if word_id in mb_ids_by_word_ids:
           mb_ids = mb_ids_by_word_ids[word_id]#().sort()
           if mb_ids is not None:
             for mb_id in mb_ids:
-              word["morphemes"].append(
-                {
+              morphemes.append(
+                self.factory.createMorph({
                   "txt" : mb_by_mb_ids[mb_id] if mb_id in mb_by_mb_ids else None,
                   "gls" : ge_by_mb_ids[mb_id] if mb_id in ge_by_mb_ids else None,
                   "id" :  mb_id
-                }
-    	      )
-        words.append(word)
+                })
+              )
+        words.append(self.factory.createWord(item, morphemes))
       return words
 
   def _get_sentences(self, participant_name: str) -> List[Sentence]:
-    sentences = []
+    sentences : List[Sentence] = []
     participant_ids = self.ids[participant_name]
     for sentence_id in participant_ids["ft_by_ref_ids"].keys():
-      sentence = dict()
-      
-      sentence["id"] = sentence_id
-      sentence["ft"] = participant_ids["ft_by_ref_ids"][sentence_id]
-      sentence["participant"] = participant_name
-      sentence["timestamp"] = self.eafob.tiers["ref@" + participant_name][0][sentence_id][0:1]
+      item = dict()
+      item["id"] = sentence_id
+      item["ft"] = participant_ids["ft_by_ref_ids"][sentence_id]
+      item["participant"] = participant_name
+      item["timestamp"] = self.eafob.tiers["ref@" + participant_name][0][sentence_id][0:1]
       
       #id of the associated annotation on the "tx" tier:
       tx_id = participant_ids["tx_ids_by_ref_ids"][sentence_id]
@@ -280,8 +280,6 @@ class ElanCorpoAfr():
                   participant_ids["mb_by_mb_ids"],
                   participant_ids["ge_by_mb_ids"]
                   )
-          sentence["words"] = words
-
-      sentences.append(sentence)
+      sentences.append(self.factory.createSentence(item, words))
     return(sentences)
 
