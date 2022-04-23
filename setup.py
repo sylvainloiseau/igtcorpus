@@ -24,10 +24,10 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     package_dir={"igttools": "src"},
+    package_data={"igttools": ["py.typed"]},
     packages=["igttools"],
     #packages=setuptools.find_packages(where="src"),
     install_requires=[
-          'markdown',
           'pytest==6.2.5',
           'pympi-ling==1.70.2',
           'xmltodict==0.12.0'
