@@ -7,10 +7,10 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="igt-tools-sylvainloiseau",
+    name="igttools",
     author_email="sylvain.loiseau@univ-paris13.fr",
     author="Sylvain Loiseau",
-    version="0.1.0",
+    version="0.0.2",
     description="Importer for IGT (interlinear glossed texts).",
     long_description=long_description,
     long_description_content_type="text/markdown",
