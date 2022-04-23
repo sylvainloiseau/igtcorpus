@@ -11,7 +11,7 @@ class Emeld():
   ORDERED_LEVEL = [
           ("document", "interlinear-text"),
           ("paragraphs","paragraph"),
-          ("sentences","sentence"),
+          ("phrases","phrase"),
           ("words","word"),
           ("morphemes","morph")]
 
@@ -60,8 +60,8 @@ class Emeld():
     :rtype: None
 
     """
-    # , fields={'text':[], 'paragraph':[], 'sentence':[], 'word':[], 'morph':[]}
-    # :param dict fields: for each level (text, paragraph, sentence, word, morph), a list of the keys in the dict representing the unit of that level that will be turned into a <item> element in EMELD.
+    # , fields={'text':[], 'paragraph':[], 'phrase':[], 'word':[], 'morph':[]}
+    # :param dict fields: for each level (text, paragraph, phrase, word, morph), a list of the keys in the dict representing the unit of that level that will be turned into a <item> element in EMELD.
     root = ET.Element('document')
     Emeld._iterate_on_level_and_create_DOM(root, igt.get_units(), 0)
     tree = ET.ElementTree(root)
@@ -98,8 +98,6 @@ class Emeld():
           else:
             unit["item"] = level['item']
       if (level_index + 1) < len(Emeld.ORDERED_LEVEL) and Emeld.ORDERED_LEVEL[level_index + 1][0] in level:
-          # Or create key if do not exist?
-          # not here anyway: all fields should also be created
           sub_level_list_name = Emeld.ORDERED_LEVEL[level_index + 1][0] 
           sub_level_name = Emeld.ORDERED_LEVEL[level_index + 1][1] 
           if level[sub_level_list_name] is not None  and sub_level_name in level[sub_level_list_name]:
@@ -145,7 +143,7 @@ class Emeld():
   @staticmethod
   def _iterate_on_level_and_create_DOM(parent_node: ET.Element, level: List[LingUnit], level_index: int) -> None:
       """
-      Iterate on all units of a given level (paragraphs, sentences, words, morphemes)
+      Iterate on all units of a given level (paragraphs, phrases, words, morphemes)
       """
       for unit in level:
           unit_name = Emeld.ORDERED_LEVEL[level_index][1]
