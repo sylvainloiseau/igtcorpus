@@ -25,6 +25,7 @@ setuptools.setup(
     ],
     package_dir={"igttools": "src"},
     packages=["igttools"],
+    package_data = {'igttools': ['schema/emeld.xsd']},
     #packages=setuptools.find_packages(where="src"),
     install_requires=[
           'markdown',
