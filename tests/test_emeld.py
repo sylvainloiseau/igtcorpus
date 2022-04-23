@@ -16,8 +16,8 @@ class TestEmeld():
     <paragraphs>
       <paragraph>
         <item type="speaker">SP1</item>
-        <sentences>
-          <sentence>
+        <phrases>
+          <phrase>
             <item type="ft">In the old days</item>
             <item type="participant">SP1</item>
             <item type="id">a4933</item>
@@ -37,8 +37,8 @@ class TestEmeld():
                 </morphemes>
               </word>
             </words>
-          </sentence>
-        </sentences>
+          </phrase>
+        </phrases>
       </paragraph>
     </paragraphs>
   </interlinear-text>
@@ -49,7 +49,7 @@ class TestEmeld():
     assert isinstance(text["document"]["interlinear-text"], list)
     assert len(text["document"]["interlinear-text"]) == 1
     assert isinstance(text["document"]["interlinear-text"][0]["paragraphs"]["paragraph"], list)
-    assert len(text["document"]["interlinear-text"][0]["paragraphs"]["paragraph"][0]["sentences"]["sentence"][0]["words"]["word"][0]["morphemes"]["morph"]) == 2
+    assert len(text["document"]["interlinear-text"][0]["paragraphs"]["paragraph"][0]["phrases"]["phrase"][0]["words"]["word"][0]["morphemes"]["morph"]) == 2
 
   def test_convert(foo):
     doc = """<?xml version="1.0" encoding="UTF-8"?>
@@ -59,8 +59,8 @@ class TestEmeld():
     <paragraphs>
       <paragraph>
         <item type="speaker">SP1</item>
-        <sentences>
-          <sentence>
+        <phrases>
+          <phrase>
             <item type="ft">In the old days</item>
             <item type="participant">SP1</item>
             <item type="id">a4933</item>
@@ -75,20 +75,20 @@ class TestEmeld():
                 </morphemes>
               </word>
             </words>
-          </sentence>
-        </sentences>
+          </phrase>
+        </phrases>
       </paragraph>
     </paragraphs>
   </interlinear-text>
 </document>
     """
     d = xmltodict.parse(doc)
-    igt = Emeld._regularize_xmltodict(d, level_index=-1)
-    igt = Emeld._turn_xmltodict_to_igt(igt, level_index=-1)
-    assert isinstance(igt, Corpus)
+    corpus = Emeld._regularize_xmltodict(d, level_index=-1)
+    corpus = Emeld._turn_xmltodict_to_igt(corpus, level_index=-1)
+    assert isinstance(corpus, Corpus)
 
   def test_readEmeld(foo):
-    igt:Corpus = Emeld.read("tests/data/test.emeld.xml")
+    c:Corpus = Emeld.read("tests/data/test.emeld.xml")
   
   def test_readWriteEmeld(foo):
     file_in = "tests/data/tiny.emeld.xml"
