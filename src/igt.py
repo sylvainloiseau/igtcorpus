@@ -1,8 +1,6 @@
 from typing import Dict, List, Union, TypeVar, Generic, Type, Tuple, Sequence
-import enum
 from attr import define, field
 from abc import ABC
-import enum
 
 Properties=Dict[str,str]
 
@@ -46,21 +44,27 @@ class Text(NonTerminalLingUnit):
 class Corpus(NonTerminalLingUnit):
     units: Sequence[Text]
 
+U = TypeVar('U', Corpus, Text, Paragraph, Sentence, Word)
+TU = TypeVar('TU', bound=Morph)
+
 @define(frozen=True)
 class UnitFactory():
 
-    def createMorph(self, properties: Properties) -> Morph:
-        return Morph(properties)
+  def createMorph(self, properties: Properties) -> Morph:
+      return Morph(properties)
 
-    def createWord(self, properties: Properties, morphs: Sequence[Morph]) -> Word:
-        return Word(properties, morphs)
+  def createWord(self, properties: Properties, morphs: Sequence[Morph]) -> Word:
+      return Word(properties, morphs)
 
-    def createSentence(self, properties: Properties, words: Sequence[Word]) -> Sentence:
-        return Sentence(properties, words)
+  def createSentence(self, properties: Properties, words: Sequence[Word]) -> Sentence:
+      return Sentence(properties, words)
 
-    def createParagraph(self, properties: Properties, sentences: Sequence[Sentence]) -> Paragraph:
-        return Paragraph(properties, sentences)
+  def createParagraph(self, properties: Properties, sentences: Sequence[Sentence]) -> Paragraph:
+      return Paragraph(properties, sentences)
 
-    def createText(self, properties: Properties, paragraphs: Sequence[Paragraph]) -> Text:
-        return Text(properties, paragraphs)
+  def createText(self, properties: Properties, paragraphs: Sequence[Paragraph]) -> Text:
+      return Text(properties, paragraphs)
+
+  def createUnit(level: Type[U], properties: Properties, units: Sequence[LingUnit]) -> NonTerminalLingUnit:
+      return level(properties, units)
 
