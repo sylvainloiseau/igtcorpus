@@ -1,10 +1,10 @@
-import xml.etree.ElementTree as ET
+from lxml import etree as ET
+#import xml.etree.ElementTree as ET
 from pathlib import Path
 import xmltodict
 from igttools.igt import Corpus, Text, Paragraph, Sentence, Word, Morph, Properties, LingUnit
 from typing import Union, Any, List, Tuple, Dict
 from collections import OrderedDict
-import pprint as pp
 
 class Emeld():
     
@@ -65,8 +65,9 @@ class Emeld():
     root = ET.Element('document')
     Emeld._iterate_on_level_and_create_DOM(root, igt.get_units(), 0)
     tree = ET.ElementTree(root)
-    with open(outfile, "wb") as f:
-      tree.write(f, encoding="UTF-8", xml_declaration=True)
+    et.write(outputfile, pretty_print=True, xml_declaration=True, encoding='UTF-8')
+    #with open(outfile, "wb") as f:
+    #  tree.write(f, encoding="UTF-8", xml_declaration=True)
 
 #  @staticmethod
 #  def _walk_tree(level, level_index, item_fun = lambda x: x, sub_level_fun: lambda x: x):
