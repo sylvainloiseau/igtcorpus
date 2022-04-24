@@ -9,11 +9,11 @@ import pprint as pp
 class Emeld():
     
   ORDERED_LEVEL = [
-          ("document", "interlinear-text"),
-          ("paragraphs","paragraph"),
-          ("phrases","phrase"),
-          ("words","word"),
-          ("morphemes","morph")]
+          ("document", "interlinear-text", Text),
+          ("paragraphs","paragraph", Paragraph),
+          ("phrases","phrase", Sentence),
+          ("words","word", Word),
+          ("morphemes","morph", Morph)]
 
   """
   read IGT from document in Emeld-xml or write IGT into Emeld-XML
@@ -126,18 +126,10 @@ class Emeld():
       res:LingUnit
       if level_index == -1:
           res = Corpus(properties, sub_unit)
-      elif level_index == 0:
-          res = Text(properties, sub_unit)
-      elif level_index == 1:
-          res = Paragraph(properties, sub_unit)
-      elif level_index == 2:
-          res = Sentence(properties, sub_unit)
-      elif level_index == 3:
-          res = Word(properties, sub_unit)
       elif level_index == 4:
           res = Morph(properties)
       else:
-          raise ValueError('unknown level: ' + str(level_index))
+          res = Emeld.ORDERED_LEVEL[level_index][2](properties, sub_unit)
       return res
 
   @staticmethod
