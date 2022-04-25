@@ -28,7 +28,7 @@ setuptools.setup(
     packages=["igttools"],
     #packages=setuptools.find_packages(where="src"),
     install_requires=[
-          'lxml==4.8.0',
+          'lxml==4.6.3',
           'pytest==6.2.5',
           'pympi-ling==1.70.2',
           'xmltodict==0.12.0'

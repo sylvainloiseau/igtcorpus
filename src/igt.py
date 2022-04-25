@@ -53,18 +53,18 @@ class UnitFactory():
   def createMorph(self, properties: Properties) -> Morph:
       return Morph(properties)
 
+  def createUnit(self, level: Type[U], properties: Properties, units: Sequence[LingUnit]) -> NonTerminalLingUnit:
+      return level(properties, units)
+
   def createWord(self, properties: Properties, morphs: Sequence[Morph]) -> Word:
-      return Word(properties, morphs)
+      return self.createUnit(Word, properties, morphs)
 
   def createSentence(self, properties: Properties, words: Sequence[Word]) -> Sentence:
-      return Sentence(properties, words)
+      return self.createUnit(Sentence, properties, words)
 
   def createParagraph(self, properties: Properties, sentences: Sequence[Sentence]) -> Paragraph:
-      return Paragraph(properties, sentences)
+      return self.createUnit(Paragraph, properties, sentences)
 
   def createText(self, properties: Properties, paragraphs: Sequence[Paragraph]) -> Text:
-      return Text(properties, paragraphs)
-
-  def createUnit(level: Type[U], properties: Properties, units: Sequence[LingUnit]) -> NonTerminalLingUnit:
-      return level(properties, units)
+      return self.createUnit(Text, properties, paragraphs)
 
