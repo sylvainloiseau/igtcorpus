@@ -1,10 +1,13 @@
-#from lxml import etree as ET
-import xml.etree.ElementTree as ET
+from lxml import etree as ET
+#import xml.etree.ElementTree as ET
 from pathlib import Path
 import xmltodict
 from igttools.igt import Corpus, Text, Paragraph, Sentence, Word, Morph, Properties, LingUnit
 from typing import Union, Any, List, Tuple, Dict
 from collections import OrderedDict
+from io import StringIO
+import pkgutil
+import pprint as pp
 
 class Emeld():
     
@@ -28,6 +31,18 @@ class Emeld():
     :param str filename: the XML Emeld document
     :rtype: Corpus
     """
+
+    #dtd_string = pkg_resources.read_text(schema, "emeld.dtd")
+    dtd_string = pkgutil.get_data(__name__, "schema/emeld.dtd").decode('UTF-8')
+    pp.pprint(dtd_string)
+    dtd = ET.DTD(StringIO(dtd_string))
+    doc = ET.parse(filename)
+    try:
+        dtd.assertValid(doc)
+    except Exception as e:
+        raise Exception("Emeld document is not valid.") from e
+        # + dtd.error_log.filter_from_errors()[0])
+
     p = Path(filename)
     document = Path(filename).read_text()
     d = xmltodict.parse(document)

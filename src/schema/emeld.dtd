@@ -1,8 +1,8 @@
 <!ELEMENT document (interlinear-text+)>
 <!ELEMENT interlinear-text (item*,paragraphs?)>
-<!ELEMENT paragraphs (paragraph+)>
+<!ELEMENT paragraphs (paragraph*)>
 <!ELEMENT paragraph (item*,phrases?)>
-<!ELEMENT phrases (phrase+)>
+<!ELEMENT phrases (phrase*)>
 <!ELEMENT phrase (item*,words?)>
 <!ELEMENT words (word*)>
 <!ELEMENT word (item*,morphemes?)>

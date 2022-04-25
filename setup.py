@@ -24,7 +24,8 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     package_dir={"igttools": "src"},
-    package_data={"igttools": ["py.typed", 'schema/emeld.xsd']},
+    package_data={"igttools": ["py.typed", 'schema/emeld.dtd']},
+    include_package_data=True,
     packages=["igttools"],
     #packages=setuptools.find_packages(where="src"),
     install_requires=[
@@ -35,6 +36,6 @@ setuptools.setup(
     ],
     # For dependencies not on pyPI:
     #dependency_links=['http://github.com/user/repo/tarball/master#egg=package-1.0']
-    python_requires=">=3.6",
+    python_requires=">=3.7",
 )
 

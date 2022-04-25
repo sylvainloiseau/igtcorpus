@@ -87,6 +87,10 @@ class TestEmeld():
     corpus = Emeld._turn_xmltodict_to_igt(corpus, level_index=-1)
     assert isinstance(corpus, Corpus)
 
+  def test_readEmeld_not_valid(foo):
+      with pytest.raises(Exception):
+          c:Corpus = Emeld.read("tests/data/test.not_valid.emeld.xml")
+
   def test_readEmeld(foo):
     c:Corpus = Emeld.read("tests/data/test.emeld.xml")
   
