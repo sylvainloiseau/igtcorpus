@@ -1,0 +1,12 @@
+<!ELEMENT document (interlinear-text+)>
+<!ELEMENT interlinear-text (item*,paragraphs?)>
+<!ELEMENT paragraphs (paragraph+)>
+<!ELEMENT paragraph (item*,phrases?)>
+<!ELEMENT phrases (phrase+)>
+<!ELEMENT phrase (item*,words?)>
+<!ELEMENT words (word*)>
+<!ELEMENT word (item*,morphemes?)>
+<!ELEMENT morphemes (morph*)>
+<!ELEMENT morph (item+)>
+<!ELEMENT item (#PCDATA)>
+<!ATTLIST item type CDATA #REQUIRED>
