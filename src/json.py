@@ -19,6 +19,7 @@ class ToJson():
         if isinstance(unit, NonTerminalLingUnit) and unit.items is not None:
             sub_level = ORDERED_LEVEL[level][1]
             res[sub_level] = [walk_corpus(u, level+1) for u in unit.items]
+        return res
               
 
 
