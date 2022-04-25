@@ -65,7 +65,7 @@ class Emeld():
     root = ET.Element('document')
     Emeld._iterate_on_level_and_create_DOM(root, igt.get_units(), 0)
     tree = ET.ElementTree(root)
-    et.write(outputfile, pretty_print=True, xml_declaration=True, encoding='UTF-8')
+    tree.write(outfile, pretty_print=True, xml_declaration=True, encoding='UTF-8')
     #with open(outfile, "wb") as f:
     #  tree.write(f, encoding="UTF-8", xml_declaration=True)
 
