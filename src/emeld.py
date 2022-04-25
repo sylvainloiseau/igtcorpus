@@ -1,5 +1,5 @@
-from lxml import etree as ET
-#import xml.etree.ElementTree as ET
+#from lxml import etree as ET
+import xml.etree.ElementTree as ET
 from pathlib import Path
 import xmltodict
 from igttools.igt import Corpus, Text, Paragraph, Sentence, Word, Morph, Properties, LingUnit
@@ -65,16 +65,16 @@ class Emeld():
     root = ET.Element('document')
     Emeld._iterate_on_level_and_create_DOM(root, igt.get_units(), 0)
     tree = ET.ElementTree(root)
-    et.write(outputfile, pretty_print=True, xml_declaration=True, encoding='UTF-8')
-    #with open(outfile, "wb") as f:
-    #  tree.write(f, encoding="UTF-8", xml_declaration=True)
+    #et.write(outputfile, pretty_print=True, xml_declaration=True, encoding='UTF-8')
+    with open(outfile, "wb") as f:
+      tree.write(f, encoding="UTF-8", xml_declaration=True)
 
 #  @staticmethod
 #  def _walk_tree(level, level_index, item_fun = lambda x: x, sub_level_fun: lambda x: x):
-#      unit = {}
 #      """
 #      Recursively walk the three and apply function
 #      """
+#      unit = {}
 #      if 'item' in level:
 #          unit['item'] = item_fun(level['item'])
 #      sub_level_list_name = Emeld.ORDERED_LEVEL[level_index + 1][0] 
@@ -110,7 +110,7 @@ class Emeld():
       return unit
 
   @staticmethod
-  def _turn_xmltodict_to_igt(level: OrderedDict, level_index: int):
+  def _turn_xmltodict_to_igt(level: OrderedDict, level_index: int) -> LingUnit:
       properties: Dict[str, str] = {}
       sub_unit: List[LingUnit] = []
       if 'item' in level:
