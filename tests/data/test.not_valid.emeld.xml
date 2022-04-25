@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<document>
+  <interlinear-text>
+    <item type="source">test.emeld.xml</item>
+    <paragraphs>
+      <paragraph>
+        <item type="speaker">SP1</item>
+        <ERROR>
+        </ERROR>
+      </paragraph>
+    </paragraphs>
+  </interlinear-text>
+</document>

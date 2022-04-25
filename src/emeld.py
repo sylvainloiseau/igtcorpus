@@ -5,6 +5,9 @@ import xmltodict
 from igttools.igt import Corpus, Text, Paragraph, Sentence, Word, Morph, Properties, LingUnit
 from typing import Union, Any, List, Tuple, Dict
 from collections import OrderedDict
+from io import StringIO
+import pkgutil
+import pprint as pp
 
 class Emeld():
     
@@ -28,6 +31,18 @@ class Emeld():
     :param str filename: the XML Emeld document
     :rtype: Corpus
     """
+
+    #dtd_string = pkg_resources.read_text(schema, "emeld.dtd")
+    dtd_string = pkgutil.get_data(__name__, "schema/emeld.dtd").decode('UTF-8')
+    pp.pprint(dtd_string)
+    dtd = ET.DTD(StringIO(dtd_string))
+    doc = ET.parse(filename)
+    try:
+        dtd.assertValid(doc)
+    except Exception as e:
+        raise Exception("Emeld document is not valid.") from e
+        # + dtd.error_log.filter_from_errors()[0])
+
     p = Path(filename)
     document = Path(filename).read_text()
     d = xmltodict.parse(document)
@@ -71,10 +86,10 @@ class Emeld():
 
 #  @staticmethod
 #  def _walk_tree(level, level_index, item_fun = lambda x: x, sub_level_fun: lambda x: x):
-#      unit = {}
 #      """
 #      Recursively walk the three and apply function
 #      """
+#      unit = {}
 #      if 'item' in level:
 #          unit['item'] = item_fun(level['item'])
 #      sub_level_list_name = Emeld.ORDERED_LEVEL[level_index + 1][0] 
@@ -110,7 +125,7 @@ class Emeld():
       return unit
 
   @staticmethod
-  def _turn_xmltodict_to_igt(level: OrderedDict, level_index: int):
+  def _turn_xmltodict_to_igt(level: OrderedDict, level_index: int) -> LingUnit:
       properties: Dict[str, str] = {}
       sub_unit: List[LingUnit] = []
       if 'item' in level:
