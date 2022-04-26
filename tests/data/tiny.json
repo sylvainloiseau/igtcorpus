@@ -1,0 +1,86 @@
+{
+    "item": {},
+    "interlinear-text": [
+        {
+            "item": {
+                "source": "tests/data/BEJ_MV_CONV_01_RICH.EAF"
+            },
+            "paragraph": [
+                {
+                    "item": {
+                        "speaker": "SP1"
+                    },
+                    "phrase": [
+                        {
+                            "item": {
+                                "ft": "",
+                                "participant": "SP1",
+                                "id": "a4932"
+                            },
+                            "word": [
+                                {
+                                    "item": {},
+                                    "morph": []
+                                }
+                            ]
+                        },
+                        {
+                            "item": {
+                                "ft": "In the old days",
+                                "participant": "SP1",
+                                "id": "a4933"
+                            },
+                            "word": [
+                                {
+                                    "item": {},
+                                    "morph": [
+                                        {
+                                            "item": {
+                                                "txt": "su\u02d0r",
+                                                "gls": "before",
+                                                "id": "a15527"
+                                            }
+                                        },
+                                        {
+                                            "item": {
+                                                "txt": "-e\u02d0",
+                                                "gls": "-GEN.PL",
+                                                "id": "a15528"
+                                            }
+                                        },
+                                        {
+                                            "item": {
+                                                "txt": "-n",
+                                                "gls": "-L",
+                                                "id": "a15529"
+                                            }
+                                        },
+                                        {
+                                            "item": {
+                                                "txt": "-e\u02d0",
+                                                "gls": "-GEN.PL",
+                                                "id": "a15530"
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    "item": {},
+                                    "morph": [
+                                        {
+                                            "item": {
+                                                "txt": "i=",
+                                                "gls": "DEF.M=",
+                                                "id": "a15531"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
