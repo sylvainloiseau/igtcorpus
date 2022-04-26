@@ -1,11 +1,11 @@
 import json
-from igttools import Corpus, Text, Paragraph, Sentence, Word, Morph, NonTerminalLingUnit
+from igttools import Corpus, LingUnit, NonTerminalLingUnit, Properties
 from Emeld import ORDERED_LEVEL
 
 class ToJson():
 
     @classmethod
-    def to_json(corpus:Corpus, outfile):
+    def to_json(corpus:Corpus, outfile: str):
         res = walk_corpus(corpus, 0)
         with open(outfile, "wb") as f:
           json.dump(res, f, indent=4)
