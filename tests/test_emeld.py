@@ -1,59 +1,46 @@
-from igttools.igt import Corpus
+from igttools.igt import Corpus, Text, Paragraph
 from igttools.emeld import Emeld
 import pprint as pp
 import pytest
-from collections import OrderedDict
-import xmltodict
+import lxml.etree as ET
 
 
 class TestEmeld():
 
-  def test_regularize(foo):
-    doc = """<?xml version="1.0" encoding="UTF-8"?>
-<document>
-  <interlinear-text>
-    <item type="source">tests/data/BEJ_MV_CONV_01_RICH.EAF</item>
-    <paragraphs>
-      <paragraph>
-        <item type="speaker">SP1</item>
-        <phrases>
-          <phrase>
-            <item type="ft">In the old days</item>
-            <item type="participant">SP1</item>
-            <item type="id">a4933</item>
-            <words>
-              <word>
-                <morphemes>
-                  <morph>
-                    <item type="txt">suːr</item>
-                    <item type="gls">before</item>
-                    <item type="id">a15527</item>
-                  </morph>
-                  <morph>
-                    <item type="txt">suːr</item>
-                    <item type="gls">before</item>
-                    <item type="id">a15527</item>
-                  </morph>
-                </morphemes>
-              </word>
-            </words>
-          </phrase>
-        </phrases>
-      </paragraph>
-    </paragraphs>
-  </interlinear-text>
-</document>
+  def test_parse1(foo):
+    doc_string = """<root><document>
+    <interlinear-text>
+    <item type="source">x</item>
+    </interlinear-text>
+    </document>
+    </root>
     """
-    d = xmltodict.parse(doc)
-    text = Emeld._regularize_xmltodict(d, level_index=-1)
-    assert isinstance(text["document"]["interlinear-text"], list)
-    assert len(text["document"]["interlinear-text"]) == 1
-    assert isinstance(text["document"]["interlinear-text"][0]["paragraphs"]["paragraph"], list)
-    assert len(text["document"]["interlinear-text"][0]["paragraphs"]["paragraph"][0]["phrases"]["phrase"][0]["words"]["word"][0]["morphemes"]["morph"]) == 2
+    doc = ET.fromstring(doc_string)
+    res = Emeld._parse_emeld(doc, -1)
+    assert Corpus({}, [Text({'source': 'x'}, [])]) == res
 
-  def test_convert(foo):
-    doc = """<?xml version="1.0" encoding="UTF-8"?>
-<document>
+  def test_parse2(foo):
+    doc_string = """<root><document>
+    <interlinear-text>
+    <item type="source">x</item>
+    <paragraphs>
+    <paragraph>
+    <item type="x">z</item>
+    </paragraph>
+    <paragraph>
+    <item type="x">y</item>
+    </paragraph>
+    </paragraphs>
+    </interlinear-text>
+    </document>
+    </root>
+    """
+    doc = ET.fromstring(doc_string)
+    res = Emeld._parse_emeld(doc, -1)
+    assert Corpus({}, [Text({'source': 'x'}, [Paragraph({'x':'z'}, []), Paragraph({'x':'y'}, [])])]) == res
+
+  def test_parse(foo):
+    doc_string = """<root><document>
   <interlinear-text>
     <item type="source">tests/data/BEJ_MV_CONV_01_RICH.EAF</item>
     <paragraphs>
@@ -72,6 +59,11 @@ class TestEmeld():
                     <item type="gls">before</item>
                     <item type="id">a15527</item>
                   </morph>
+                  <morph>
+                    <item type="txt">suːr</item>
+                    <item type="gls">before</item>
+                    <item type="id">a15527</item>
+                  </morph>
                 </morphemes>
               </word>
             </words>
@@ -81,11 +73,10 @@ class TestEmeld():
     </paragraphs>
   </interlinear-text>
 </document>
+</root>
     """
-    d = xmltodict.parse(doc)
-    corpus = Emeld._regularize_xmltodict(d, level_index=-1)
-    corpus = Emeld._turn_xmltodict_to_igt(corpus, level_index=-1)
-    assert isinstance(corpus, Corpus)
+    doc = ET.fromstring(doc_string)
+    res = Emeld._parse_emeld(doc, -1)
 
   def test_readEmeld_not_valid(foo):
       with pytest.raises(Exception):

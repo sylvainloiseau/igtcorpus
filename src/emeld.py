@@ -1,13 +1,9 @@
 from lxml import etree as ET
-#import xml.etree.ElementTree as ET
 from pathlib import Path
-import xmltodict
 from igttools.igt import Corpus, Text, Paragraph, Sentence, Word, Morph, Properties, LingUnit
 from typing import Union, Any, List, Tuple, Dict
-from collections import OrderedDict
 from io import StringIO
 import pkgutil
-import pprint as pp
 
 class Emeld():
     
@@ -34,7 +30,6 @@ class Emeld():
 
     #dtd_string = pkg_resources.read_text(schema, "emeld.dtd")
     dtd_string = pkgutil.get_data(__name__, "schema/emeld.dtd").decode('UTF-8')
-    pp.pprint(dtd_string)
     dtd = ET.DTD(StringIO(dtd_string))
     doc = ET.parse(filename)
     try:
@@ -43,24 +38,9 @@ class Emeld():
         raise Exception("Emeld document is not valid.") from e
         # + dtd.error_log.filter_from_errors()[0])
 
-    p = Path(filename)
-    document = Path(filename).read_text()
-    d = xmltodict.parse(document)
-
-#    text = _walk_tree(text,
-#            level_index=0,
-#            item_fun=lambda x : [ x ] if isinstance(x, OrderedDict) else x,
-#            sub_level_fun=lambda x : [ x ] if isinstance(x, OrderedDict) else x
-#    )
-#    #text = Emeld._regularize_xmltodict(, level_index=0)
-#    text = _walk_tree(text,
-#            level_index=0,
-#            item_fun=lambda x : { (i['@type']: i['#text'] if '#text' in i else "" ) for i in x}
-#            sub_level_fun=lambda x : [x] if isinstance(x, OrderedDict) else x
-#    )
-
-    texts = Emeld._regularize_xmltodict(d, level_index=-1)
-    corpus = Emeld._turn_xmltodict_to_igt(texts, level_index=-1)
+    newroot = ET.Element("root") # we need an extra level for ease of recursion
+    newroot.append(doc.getroot())
+    corpus = Emeld._parse_emeld(newroot, level_index=-1)
     return corpus
     
   @classmethod
@@ -84,61 +64,18 @@ class Emeld():
     #with open(outfile, "wb") as f:
     #  tree.write(f, encoding="UTF-8", xml_declaration=True)
 
-#  @staticmethod
-#  def _walk_tree(level, level_index, item_fun = lambda x: x, sub_level_fun: lambda x: x):
-#      """
-#      Recursively walk the three and apply function
-#      """
-#      unit = {}
-#      if 'item' in level:
-#          unit['item'] = item_fun(level['item'])
-#      sub_level_list_name = Emeld.ORDERED_LEVEL[level_index + 1][0] 
-#      sub_level_name = Emeld.ORDERED_LEVEL[level_index + 1][1] 
-#      if (level_index + 1) < len(Emeld.ORDERED_LEVEL) and sub_level_list_name in level:
-#          if level[sub_level_list_name] is not None:
-#            unit[sub_level_list_name] = sub_level_fun(level[sub_level_list_name])
-#      return unit
-
   @staticmethod
-  def _regularize_xmltodict(level, level_index):
-      unit = {}
-      """
-      structure created by xmltodict contains either OrderedDict or List for a given key "x", depending on
-      whether there is one child element "x" or several child element "x". This
-      function turn all values associated to a key as list, be it a length-1 or
-      not.
-      """
-      if 'item' in level:
-          if isinstance(level['item'], OrderedDict):
-            unit["item"] = [ level['item'] ]
-          else:
-            unit["item"] = level['item']
-      if (level_index + 1) < len(Emeld.ORDERED_LEVEL) and Emeld.ORDERED_LEVEL[level_index + 1][0] in level:
-          sub_level_list_name = Emeld.ORDERED_LEVEL[level_index + 1][0] 
-          sub_level_name = Emeld.ORDERED_LEVEL[level_index + 1][1] 
-          if level[sub_level_list_name] is not None  and sub_level_name in level[sub_level_list_name]:
-            if isinstance(level[sub_level_list_name][sub_level_name], OrderedDict):
-                level[sub_level_list_name][sub_level_name] = [ level[sub_level_list_name][sub_level_name] ]
-            sublevels_in = level[sub_level_list_name][sub_level_name]
-            unit[sub_level_list_name] = {}
-            unit[sub_level_list_name][sub_level_name] = [ Emeld._regularize_xmltodict(sublevel, level_index + 1) for sublevel in sublevels_in]
-      return unit
-
-  @staticmethod
-  def _turn_xmltodict_to_igt(level: OrderedDict, level_index: int) -> LingUnit:
+  def _parse_emeld(e, level_index: int):
       properties: Dict[str, str] = {}
       sub_unit: List[LingUnit] = []
-      if 'item' in level:
-          items = level['item']
-          for item in items:
-            properties[ item['@type'] ] = item['#text'] if '#text' in item else ""
-      if (level_index + 1) < len(Emeld.ORDERED_LEVEL) and Emeld.ORDERED_LEVEL[level_index + 1][0] in level:
-          sub_level_list_name = Emeld.ORDERED_LEVEL[level_index + 1][0] 
-          sub_level_name =      Emeld.ORDERED_LEVEL[level_index + 1][1] 
-          if level[sub_level_list_name] is not None  and sub_level_name in level[sub_level_list_name]:
-            sublevels_in = level[sub_level_list_name][sub_level_name]
-            sublevels_out = [ Emeld._turn_xmltodict_to_igt(sublevel, level_index + 1) for sublevel in sublevels_in]
-            sub_unit = sublevels_out
+      for i in e.iterchildren("item"):
+          properties[i.get("type")] = i.text or ""
+      if (level_index + 1) < len(Emeld.ORDERED_LEVEL):
+        sub_level_list_name = Emeld.ORDERED_LEVEL[level_index + 1][0] 
+        sub_level_name = Emeld.ORDERED_LEVEL[level_index + 1][1] 
+        sub_level = e.find(sub_level_list_name)
+        if sub_level is not None:
+          sub_unit = [Emeld._parse_emeld(s, level_index + 1) for s in sub_level.iterchildren()]
       res:LingUnit
       if level_index == -1:
           res = Corpus(properties, sub_unit)
