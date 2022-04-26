@@ -55,14 +55,10 @@ class Emeld():
     :rtype: None
 
     """
-    # , fields={'text':[], 'paragraph':[], 'phrase':[], 'word':[], 'morph':[]}
-    # :param dict fields: for each level (text, paragraph, phrase, word, morph), a list of the keys in the dict representing the unit of that level that will be turned into a <item> element in EMELD.
     root = ET.Element('document')
     Emeld._iterate_on_level_and_create_DOM(root, igt.get_units(), 0)
     tree = ET.ElementTree(root)
     tree.write(outfile, pretty_print=True, xml_declaration=True, encoding='UTF-8')
-    #with open(outfile, "wb") as f:
-    #  tree.write(f, encoding="UTF-8", xml_declaration=True)
 
   @staticmethod
   def _parse_emeld(e, level_index: int):
