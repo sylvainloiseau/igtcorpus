@@ -1,0 +1,10 @@
+.tox/
+igt_tools_sylvainloiseau.egg-info/
+tests/__pycache__/
+tiny.emed.xml.out
+TODO
+src/igt_tools_sylvainloiseau.egg-info
+dist/
+igttools.egg-info/
+tests/data/BEJ_MV_CONV_01_RICH.EAF.out
+tests/data/tiny.emeld.xml.out
