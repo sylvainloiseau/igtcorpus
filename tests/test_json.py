@@ -1,6 +1,6 @@
 from igttools.igt import Corpus, Text
 from igttools.emeld import Emeld
-from igttools.json import ToJson
+from igttools.json import EmeldJson
 import pprint as pp
 import pytest
 
@@ -8,7 +8,7 @@ class TestToJson():
 
   def test_walk_corpus(foo):
     c:Corpus = Emeld.read("tests/data/test.emeld.xml")
-    j = ToJson._walk_corpus(c, 0)
+    j = EmeldJson._walk_corpus(c, 0)
     if c.units is not None:
         assert len(c.units) == len(j["interlinear-text"])
     # number of sentences of the first paragraph of the first text
@@ -32,21 +32,21 @@ class TestToJson():
          }
       ]
     }
-    c: Corpus = ToJson._dicttoLingUnit(d, -1)
+    c: Corpus = EmeldJson._dicttoLingUnit(d, -1)
     assert c == Corpus({}, [Text({'id':'foo'}, []), Text({'id':'bar'}, [])])
 
   def test_write_json_tiny(foo):
     c:Corpus = Emeld.read("tests/data/tiny.emeld.xml")
     out = "tests/data/tiny.emeld.json.out"
-    ToJson.write(c, out)
-    newc: Corpus = ToJson.read(out)
+    EmeldJson.write(c, out)
+    newc: Corpus = EmeldJson.read(out)
     assert c == newc
 
   def test_write_json(foo):
     c:Corpus = Emeld.read("tests/data/test.emeld.xml")
     out = "tests/data/test.emeld.json.out"
-    ToJson.write(c, out)
-    newc: Corpus = ToJson.read(out)
+    EmeldJson.write(c, out)
+    newc: Corpus = EmeldJson.read(out)
     assert c == newc
 
     

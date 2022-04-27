@@ -12,7 +12,7 @@ pip install git+https://github.com/sylvainloiseau/igt-tools.git#egg=igttools
 from igttools.elan import ElanCorpoAfr
 from igttools.igt import Corpus
 from igttools.emeld import Emeld
-from igttools.json import ToJson
+from igttools.json import EmeldJson
 
 # Read...
 # - EAF (elan) file
@@ -21,12 +21,12 @@ corpus = eaf.get_igt()
 # - Emeld document
 corpus = Emeld.read("tests/data/test.emeld.xml")
 # - json
-corpus = ToJson.read("tests/data/tiny.json")
+corpus = EmeldJson.read("tests/data/tiny.json")
 
 # ...Write...
 # - as emeld
 Emeld.write(corpus, "corpus.emeld")
 # - as JSON
-ToJson.write(corpus, "corpus.json")
+EmeldJson.write(corpus, "corpus.json")
 ```
 
