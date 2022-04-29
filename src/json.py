@@ -68,10 +68,10 @@ class EmeldJson():
                 {
                     'item': {
                         'id': 'text1'
-                    }
+                    },
                     'paragraph: [
                         {
-                            'item': {}
+                            'item': {},
                             'phrase': [
                                 # etc.
                             ]
