@@ -7,8 +7,6 @@ import pytest
 class TestEAF():
 
   def test_eaf_file(foo):
-    obj = ElanCorpoAfr("tests/data/BEJ_MV_CONV_01_RICH.EAF")
-    igt = obj.get_igt()
-    pp.pprint(igt)
-    Emeld.write(igt, "tests/data/BEJ_MV_CONV_01_RICH.EAF.out")
+    corpus = ElanCorpoAfr.read("tests/data/BEJ_MV_CONV_01_RICH.EAF")
+    Emeld.write(corpus, "tests/data/BEJ_MV_CONV_01_RICH.EAF.out")
 

@@ -16,8 +16,7 @@ from igttools.json import EmeldJson
 
 # Read...
 # - EAF (elan) file
-eaf = ElanCorpoAfr("tests/data/BEJ_MV_CONV_01_RICH.EAF")
-corpus = eaf.get_igt()
+corpus = ElanCorpoAfr.read("tests/data/BEJ_MV_CONV_01_RICH.EAF")
 # - Emeld document
 corpus = Emeld.read("tests/data/test.emeld.xml")
 # - json
