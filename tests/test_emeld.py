@@ -1,6 +1,5 @@
-from igttools.igt import Corpus, Text, Paragraph
-from igttools.emeld import Emeld
-import pprint as pp
+from igtcorpus.igt import Corpus, Text, Paragraph
+from igtcorpus.emeld import Emeld
 import pytest
 import lxml.etree as ET
 

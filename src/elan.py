@@ -1,7 +1,6 @@
 from pympi.Elan import Eaf
-from igttools.igt import Corpus, Text, Paragraph, Sentence, Word, Morph, UnitFactory
+from igtcorpus.igt import Corpus, Text, Paragraph, Sentence, Word, Morph, UnitFactory
 from typing import Union, List, Dict, Set
-import pprint as pp
 
 class ElanCorpoAfr():
  

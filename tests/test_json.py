@@ -1,7 +1,6 @@
-from igttools.igt import Corpus, Text
-from igttools.emeld import Emeld
-from igttools.json import EmeldJson
-import pprint as pp
+from igtcorpus.igt import Corpus, Text
+from igtcorpus.emeld import Emeld
+from igtcorpus.json import EmeldJson
 import pytest
 
 class TestToJson():

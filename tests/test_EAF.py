@@ -1,7 +1,6 @@
-from igttools.elan import ElanCorpoAfr
-from igttools.igt import Corpus
-from igttools.emeld import Emeld
-import pprint as pp
+from igtcorpus.elan import ElanCorpoAfr
+from igtcorpus.igt import Corpus
+from igtcorpus.emeld import Emeld
 import pytest
 
 class TestEAF():

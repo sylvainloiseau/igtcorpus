@@ -1,6 +1,6 @@
 import json
-from igttools.igt import Corpus, Morph, LingUnit, NonTerminalLingUnit, Properties
-from igttools.emeld import Emeld
+from igtcorpus.igt import Corpus, Morph, LingUnit, NonTerminalLingUnit, Properties
+from igtcorpus.emeld import Emeld
 from io import StringIO
 from typing import List, Dict, Sequence, Union, MutableMapping
 

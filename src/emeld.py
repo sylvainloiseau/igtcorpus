@@ -1,6 +1,6 @@
 from lxml import etree as ET
 from pathlib import Path
-from igttools.igt import Corpus, Text, Paragraph, Sentence, Word, Morph, Properties, LingUnit
+from igtcorpus.igt import Corpus, Text, Paragraph, Sentence, Word, Morph, Properties, LingUnit
 from typing import Union, Any, List, Tuple, Dict
 from io import StringIO
 import pkgutil

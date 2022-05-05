@@ -3,16 +3,16 @@ Utility for IGT (interlinear glossed texts).
 # Installation
 
 ```
-pip install git+https://github.com/sylvainloiseau/igt-tools.git#egg=igttools
+pip install git+https://github.com/sylvainloiseau/igtcorpus.git#egg=igtcorpus
 ```
 
 # Usage
 
 ```
-from igttools.elan import ElanCorpoAfr
-from igttools.igt import Corpus
-from igttools.emeld import Emeld
-from igttools.json import EmeldJson
+from igtcorpus.elan import ElanCorpoAfr
+from igtcorpus.igt import Corpus
+from igtcorpus.emeld import Emeld
+from igtcorpus.json import EmeldJson
 
 # Read...
 # - EAF (elan) file

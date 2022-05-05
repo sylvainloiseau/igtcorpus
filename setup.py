@@ -7,26 +7,26 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="igttools",
+    name="igtcorpus",
     author_email="sylvain.loiseau@univ-paris13.fr",
     author="Sylvain Loiseau",
     version="0.0.2",
     description="Importer for IGT (interlinear glossed texts).",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://gitlab.univ-paris13.fr/sylvain.loiseau/igt-tools",
+    url="https://gitlab.univ-paris13.fr/sylvain.loiseau/igtcorpus",
     project_urls={
-        "Bug Tracker": "https://gitlab.univ-paris13.fr/sylvain.loiseau/igt-tools",
+        "Bug Tracker": "https://gitlab.univ-paris13.fr/sylvain.loiseau/igtcorpus",
     },
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    package_dir={"igttools": "src"},
-    package_data={"igttools": ["py.typed", 'schema/emeld.dtd']},
+    package_dir={"igtcorpus": "src"},
+    package_data={"igtcorpus": ["py.typed", 'schema/emeld.dtd']},
     include_package_data=True,
-    packages=["igttools"],
+    packages=["igtcorpus"],
     #packages=setuptools.find_packages(where="src"),
     install_requires=[
           'lxml>=4.6.3',
