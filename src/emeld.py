@@ -56,7 +56,7 @@ class Emeld():
 
     """
     root = ET.Element('document')
-    Emeld._iterate_on_level_and_create_DOM(root, igt.get_units(), 0)
+    Emeld._iterate_on_level_and_create_DOM(root, igt.sub_units, 0)
     tree = ET.ElementTree(root)
     tree.write(outfile, pretty_print=True, xml_declaration=True, encoding='UTF-8')
 
@@ -89,11 +89,11 @@ class Emeld():
       for unit in level:
           unit_name = Emeld.ORDERED_LEVEL[level_index][1]
           unit_node = ET.SubElement(parent_node, unit_name)
-          properties = unit.get_properties()
+          properties = unit.properties
           if properties is not None:
               Emeld._populate_with_item(properties, unit_node)
           if (level_index+1) < len(Emeld.ORDERED_LEVEL):
-            sub_units = unit.get_units()
+            sub_units = unit.sub_units
             if sub_units is not None:
                 sub_level_node = ET.SubElement(unit_node, Emeld.ORDERED_LEVEL[level_index + 1][0])
                 Emeld._iterate_on_level_and_create_DOM(sub_level_node, sub_units, level_index + 1)

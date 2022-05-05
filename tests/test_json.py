@@ -9,10 +9,10 @@ class TestToJson():
   def test_walk_corpus(foo):
     c:Corpus = Emeld.read("tests/data/test.emeld.xml")
     j = EmeldJson._walk_corpus(c, 0)
-    if c.units is not None:
-        assert len(c.units) == len(j["interlinear-text"])
+    if c.sub_units is not None:
+        assert len(c.sub_units) == len(j["interlinear-text"])
     # number of sentences of the first paragraph of the first text
-    assert len(c.units[0].units[0].units) == len(j["interlinear-text"][0]["paragraph"][0]["phrase"])
+    assert len(c.sub_units[0].sub_units[0].sub_units) == len(j["interlinear-text"][0]["paragraph"][0]["phrase"])
 
   def test_dicttoLingUnit(foo):
     d = {

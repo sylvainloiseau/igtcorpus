@@ -2,7 +2,7 @@ import json
 from igttools.igt import Corpus, Morph, LingUnit, NonTerminalLingUnit, Properties
 from igttools.emeld import Emeld
 from io import StringIO
-from typing import List, Dict
+from typing import List, Dict, Sequence, Union, MutableMapping
 
 class EmeldJson():
     """
@@ -14,14 +14,13 @@ class EmeldJson():
 
     @staticmethod
     def _walk_corpus(unit: LingUnit, level:int):
-        res = {}
+        res  = {} #: MutableMapping[str, Union[MutableMapping[str, str], Sequence[LingUnit]]]
         res[EmeldJson.ITEM] = {}
         for k,v in unit.properties.items():
             res[EmeldJson.ITEM][k] = v or EmeldJson.EMPTY
-        if isinstance(unit, NonTerminalLingUnit) and unit.units is not None:
+        if isinstance(unit, NonTerminalLingUnit) and unit.sub_units is not None:
             sub_level = Emeld.ORDERED_LEVEL[level][1]
-            res[sub_level] = [EmeldJson
-        ._walk_corpus(u, level+1) for u in unit.units]
+            res[sub_level] = [EmeldJson ._walk_corpus(u, level+1) for u in unit.sub_units]
         return res
 
     @classmethod

@@ -1,6 +1,7 @@
-import pympi
+from pympi.Elan import Eaf
 from igttools.igt import Corpus, Text, Paragraph, Sentence, Word, Morph, UnitFactory
 from typing import Union, List, Dict, Set
+import pprint as pp
 
 class ElanCorpoAfr():
  
@@ -9,36 +10,37 @@ class ElanCorpoAfr():
   """
 
   @classmethod
-  def read(cls, filename) -> Corpus:
+  def read(cls, filename: str) -> Corpus:
     """
     Create a corpus object
     """
-    eafob = pympi.Elan.Eaf(filename)
+    eafob:Eaf = Eaf(filename)
     factory:UnitFactory = UnitFactory()
 
     # the set of the participant (used as suffix on tier name: mb@SP1,
     # mb@SP2, etc).
-    participants = ElanCorpoAfr._get_participants(eafob)
+    participants: Set[str] = ElanCorpoAfr._get_participants(eafob)
 
     # Turn the pympi data structures, organized by  tier, into a
     # hierarchical structures of ids (sentences -> words -> morphems)
     # for each participant
-    ids = { p: ElanCorpoAfr._get_ids_by_participant(eafob, p) for p in participants }
+    ids = { p: ElanCorpoAfr._get_annotation_ids_for_participant(eafob, p) for p in participants }
 
     # Turn the hierarchical structure of ids into actual sentences:
-    sentences = []
+    sentences : List[Sentence] = []
     for p in participants:
       if ids[p] is not None:
-        sentences = sentences + ElanCorpoAfr._get_sentences(ids, eafob, p, factory) # TODO redondant argument
+        sentences.extend(ElanCorpoAfr._get_sentences(ids, eafob, p, factory)) # TODO redondant argument
 
-    # order the sentences of the text by their timestamp
+    # order the sentences by their timestamp
     sentences = ElanCorpoAfr._order_sentences(sentences, eafob)
 
     # group sentences into paragraphs. Paragraphs are made of
     # consecutive sentences by the same spaker.
     paragraphs = ElanCorpoAfr._make_paragraphs_with_speaker(sentences, factory)
 
-    text = Text({"source" : filename}, paragraphs)
+    #text = Text({"source" : filename}, paragraphs)
+    text :Text = factory.createText({'source': filename}, paragraphs)
     return(Corpus({}, [text]))
 
   @staticmethod
@@ -52,9 +54,9 @@ class ElanCorpoAfr():
     """
     paragraphs: List[Paragraph] = []
     collected_sentences: List[Sentence] = []
-    current_speaker: str = sentences[0].get_properties()["participant"]
+    current_speaker: str = sentences[0].properties["participant"]
     for s in sentences:
-        speaker = s.get_properties()["participant"]
+        speaker = s.properties["participant"]
         if speaker != current_speaker:
             paragraphs.append(factory.createParagraph({"speaker": current_speaker}, collected_sentences))
             current_speaker = speaker
@@ -65,15 +67,15 @@ class ElanCorpoAfr():
     return(paragraphs)
             
   @staticmethod
-  def _order_sentences(sentences : List[Sentence], eafob) -> List[Sentence]:
+  def _order_sentences(sentences : List[Sentence], eafob:Eaf) -> List[Sentence]:
       sorted_sentences = sorted(
           sentences,
           key=lambda x : eafob.timeslots[ x.get_properties()["timestamp"][0] ]
         )
       return(sorted_sentences)
-  
+
   @staticmethod
-  def _get_ids_by_participant(eafob, participant : str) -> Union[Dict[str, Dict[str, str]], None]:
+  def _get_annotation_ids_for_participant(eafob: Eaf, participant : str) -> Union[Dict[str, Dict[str, str]], None]:
     mb_tier = "mb" + "@" + participant
     ge_tier = "ge" + "@" + participant
     mot_tier = "mot" + "@" + participant
@@ -135,7 +137,7 @@ class ElanCorpoAfr():
     return res
 
   @staticmethod
-  def _get_participants(eafob) -> Set[str]:
+  def _get_participants(eafob:Eaf) -> Set[str]:
       v = [x.split("@") for x in eafob.tiers.keys()]
       p = [x[1] for x in v if len(x) > 1]
       return(set(p))
@@ -152,8 +154,8 @@ class ElanCorpoAfr():
             for mb_id in mb_ids:
               morphemes.append(
                 factory.createMorph({
-                  "txt" : mb_by_mb_ids[mb_id] if mb_id in mb_by_mb_ids else None,
-                  "gls" : ge_by_mb_ids[mb_id] if mb_id in ge_by_mb_ids else None,
+                  "txt" : mb_by_mb_ids[mb_id] if mb_id in mb_by_mb_ids else "",
+                  "gls" : ge_by_mb_ids[mb_id] if mb_id in ge_by_mb_ids else "",
                   "id" :  mb_id
                 })
               )
@@ -161,7 +163,7 @@ class ElanCorpoAfr():
       return words
 
   @staticmethod
-  def _get_sentences(ids, eafob, participant_name: str, factory:UnitFactory) -> List[Sentence]:
+  def _get_sentences(ids, eafob: Eaf, participant_name: str, factory:UnitFactory) -> List[Sentence]:
     sentences : List[Sentence] = []
     participant_ids = ids[participant_name]
     for sentence_id in participant_ids["ft_by_ref_ids"].keys():
@@ -186,6 +188,7 @@ class ElanCorpoAfr():
                   factory
                   )
       sentences.append(factory.createSentence(item, words))
+    #print(sentences)
     return(sentences)
 
 #  pympi produces the following structures :
