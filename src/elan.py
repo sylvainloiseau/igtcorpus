@@ -1,5 +1,6 @@
 from pympi.Elan import Eaf
-from igtcorpus.igt import Corpus, Text, Paragraph, Sentence, Word, Morph, UnitFactory
+from igtcorpus.igt import Corpus, Text, Paragraph, Sentence, Word, Morph 
+from igtcorpus.factory import UnitFactory
 from typing import Union, List, Dict, Set
 
 class ElanCorpoAfr():
@@ -153,8 +154,8 @@ class ElanCorpoAfr():
             for mb_id in mb_ids:
               morphemes.append(
                 factory.createMorph({
-                  "txt" : mb_by_mb_ids[mb_id] if mb_id in mb_by_mb_ids else "",
-                  "gls" : ge_by_mb_ids[mb_id] if mb_id in ge_by_mb_ids else "",
+                  "txt" : mb_by_mb_ids[mb_id] if mb_id in mb_by_mb_ids else "", # TODO use constant
+                  "gls" : ge_by_mb_ids[mb_id] if mb_id in ge_by_mb_ids else "", # TODO use constant
                   "id" :  mb_id
                 })
               )
@@ -167,6 +168,7 @@ class ElanCorpoAfr():
     participant_ids = ids[participant_name]
     for sentence_id in participant_ids["ft_by_ref_ids"].keys():
       item = dict()
+      # TODO None value shoud be turned into ""
       item["id"] = sentence_id
       item["ft"] = participant_ids["ft_by_ref_ids"][sentence_id]
       item["participant"] = participant_name
