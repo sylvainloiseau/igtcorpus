@@ -28,7 +28,7 @@ class UnitFactory():
       res = self.createNonTerminalUnit(Text, properties, paragraphs)
       return cast(Text, res)
 
-LEVELS :List[Type[LingUnit]] = [ Text, Paragraph, Sentence, Word, Morph ]
+LEVELS :List[Type[LingUnit]] = [ Corpus, Text, Paragraph, Sentence, Word, Morph ]
 LEVEL_INDEX : Dict[Type[LingUnit], int]  = dict([(l, i) for i, l in enumerate(LEVELS)])
 
 UnitCountType    = Dict[Type[LingUnit], int]
@@ -37,22 +37,7 @@ PropertyListType = Dict[Type[LingUnit], Dict[str, int]]
 
 class CorpusFactory():
   """
-  Create a corpus.
-
-  f = CorpusFactory()
-  f.createMorph({'tx': 'a', 'gl': '1SG'})
-  f.end_unit(Word)
-  f.createMorph({'tx': 'mami', 'gl': 'pig'})
-  f.createMorph({'tx': '-mo', 'gl': '-CL'})
-  f.end_unit(Word)
-  f.createMorph({'tx': 'iefi', 'gl': 'shoot'})
-  f.createMorph({'tx': '-mwii', 'gl': '-1SG.M'})
-  f.end_unit(Word)
-  f.end_unit(Sentence)
-  f.end_unit(Paragraph)
-  f.end_unit(Text)
-
-  c: Corpus = f.get_corpus()
+  Create piece by piece.
   """
 
   def __init__(self):
@@ -61,29 +46,74 @@ class CorpusFactory():
       self.accumulator     : AccumulatorType  = dict([(l, []) for l in LEVELS])
       self.properties_list : PropertyListType = dict([(l, {}) for l in LEVELS])
 
+      self.currently_in : Type[NonTerminalLingUnit] = None
+      self.current_unit_property : Dict[Type[NonTerminalLingUnit], Properties] = {}
+
   def createMorph(self, properties: Properties) -> None:
+      if self.currently_in != Word:
+          raise Exception(f"Can't create Morph while in { str(self.currently_in) }")
       self.accumulator[Morph].append(
               self.unit_factory.createMorph(properties)
               )
       self._check_properties(Morph, properties)
       self._increment(Morph)
 
-  def end_unit(self, level: Type[NonTerminalLingUnit], properties: Properties = {}) -> None:
+  def start_unit(self, level: Type[NonTerminalLingUnit], properties: Properties = {}) -> None:
+      if level == Corpus:
+          if self.currently_in is not None:
+              raise Exception(f"Can't create { str(level) } when other unit is already open")
+      elif level == Text:
+          if self.currently_in != Corpus:
+              raise Exception(f"Can't create { str(level) } in { str(self.currently_in) }")
+      elif level == Paragraph:
+          if self.currently_in != Text:
+              raise Exception(f"Can't create { str(level) } in { str(self.currently_in) }")
+      elif level == Sentence:
+          if self.currently_in != Paragraph:
+              raise Exception(f"Can't create { str(level) } in { str(self.currently_in) }")
+      elif level == Word:
+          if self.currently_in != Sentence:
+              raise Exception(f"Can't create { str(level) } in { str(self.currently_in) }")
+      else:
+          raise Exception(f"Unknwon unit type: { str(level) }")
+
+      self.currently_in = level
+      self.current_unit_property[level] = properties
+
+  def end_unit(self, level:Type[NonTerminalLingUnit]=Word) -> None:
+      if level != self.currently_in:
+        raise Exception(f"Trying to close { level } while in { self.currently_in }")
       li = LEVEL_INDEX[level] 
       sublevel = LEVELS[li + 1]
       self.accumulator[level].append(
         self.unit_factory.createNonTerminalUnit(
           level,
-          properties,
+          self.current_unit_property[level],
           self.accumulator[ sublevel ]
         )
       )
       self.accumulator[ sublevel ] = []
       self._increment(level)
-      self._check_properties(level, properties)
+      self._check_properties(level, self.current_unit_property[level])
 
-  def get_corpus(self, properties: Properties = {}) -> Corpus:
-      return Corpus(properties, self.accumulator[Text])
+      if level == Corpus:
+          self.currently_in = None
+      else:
+          self.currently_in = LEVELS[li - 1]
+          self.current_unit_property[level] = {}
+
+  def get_corpus(self, corpus_properties: Properties = {}) -> Corpus:
+      if len(self.accumulator[Corpus]) < 1:
+          raise Exception("No corpus created")
+      if self.currently_in != None:
+          raise Exception("Can't build the corpus while some unit are still open")
+      return self.accumulator[Corpus][0]
+
+  def get_occ_nbr_for_level(self, level:Type[LingUnit]) -> int:
+      return self.nb_unit[level]
+
+  def get_properties_for_level(self, level:Type[LingUnit]) -> Dict[str, int]:
+      return self.properties_list[level]
 
   def _increment(self, level: Type[LingUnit]) -> None:
       self.nb_unit[level] += 1
