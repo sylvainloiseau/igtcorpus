@@ -42,6 +42,7 @@ class TestFactory:
     def tiny_corpus_factory(x):
       f = CorpusFactory()
       f.start_unit(Corpus)
+      f.start_unit(Text)
       f.start_unit(Paragraph)
       f.start_unit(Sentence)
       f.start_unit(Word)
@@ -60,12 +61,16 @@ class TestFactory:
       f.end_unit(Text)
       f.end_unit(Corpus)
       return f
-#
-#  def test_factory(factory):
-#    c = factory.get_corpus()
-#    assert 1 == len(corpus.get_sub_units())
-#    assert Morph({'tx': 'a', 'gl': '1SG'}) == corpus.get_sub_units()[0].get_sub_units()[0].get_sub_units()[0].get_sub_units()[0].get_sub_units()[0]
-#
+
+    def test_tiny_corpus_factory(x, tiny_corpus_factory):
+      pass
+
+    def test_factory_morph_property(x, tiny_corpus_factory):
+      c = tiny_corpus_factory.get_corpus()
+      assert 1 == len(c.get_sub_units())
+      assert Morph({'tx': 'a', 'gl': '1SG'}) == c.get_sub_units()[0].get_sub_units()[0].get_sub_units()[0].get_sub_units()[0].get_sub_units()[0]
+      assert Morph({'tx': 'a', 'gl': '1SG'}) == c.get(Text)[0].get(Paragraph)[0].get(Sentence)[0].get(Word)[0].get(Morph)[0]
+
 #  def test_occ_nbr_for_level(factory):
 #
 #    assert factory.get_occ_nbr_for_level(Morph) == 2
