@@ -1,5 +1,5 @@
 from typing import Dict, List, Type, Sequence, cast
-from igtcorpus.igt import Corpus, Text, Paragraph, Sentence, Word, Morph, Properties, LingUnit, NonTerminalLingUnit
+from igtcorpus.igt import Corpus, Text, Paragraph, Sentence, Word, Morph, Properties, LingUnit, NonTerminalLingUnit, LEVELS
 
 class UnitFactory():
   """
@@ -28,7 +28,6 @@ class UnitFactory():
       res = self.createNonTerminalUnit(Text, properties, paragraphs)
       return cast(Text, res)
 
-LEVELS :List[Type[LingUnit]] = [ Corpus, Text, Paragraph, Sentence, Word, Morph ]
 LEVEL_INDEX : Dict[Type[LingUnit], int]  = dict([(l, i) for i, l in enumerate(LEVELS)])
 
 UnitCountType    = Dict[Type[LingUnit], int]
