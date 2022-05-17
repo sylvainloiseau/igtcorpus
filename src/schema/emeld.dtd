@@ -10,3 +10,4 @@
 <!ELEMENT morph (item+)>
 <!ELEMENT item (#PCDATA)>
 <!ATTLIST item type CDATA #REQUIRED>
+<!ATTLIST item lang CDATA #REQUIRED>

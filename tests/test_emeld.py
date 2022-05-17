@@ -77,6 +77,26 @@ class TestEmeld():
     doc = ET.fromstring(doc_string)
     res = Emeld._parse_emeld(doc, -1)
 
+  def test_parse_with_lang(foo):
+    doc_string = """<root><document>
+    <interlinear-text>
+    <item type="source">x</item>
+    <paragraphs>
+    <paragraph>
+    <item type="x" lang="tpi">z</item>
+    </paragraph>
+    <paragraph>
+    <item type="x" lang="en">y</item>
+    </paragraph>
+    </paragraphs>
+    </interlinear-text>
+    </document>
+    </root>
+    """
+    doc = ET.fromstring(doc_string)
+    res = Emeld._parse_emeld(doc, -1)
+    assert Corpus({}, [Text({'source': 'x'}, [Paragraph({'x.tpi':'z'}, []), Paragraph({'x.en':'y'}, [])])]) == res
+
   def test_readEmeld_not_valid(foo):
       with pytest.raises(Exception):
           c:Corpus = Emeld.read("tests/data/test.not_valid.emeld.xml")
@@ -92,3 +112,10 @@ class TestEmeld():
     igt_2: Corpus = Emeld.read(file_out)
     assert igt == igt_2
   
+  def test_readWriteEmeldWLang(foo):
+    file_in = "tests/data/tiny.emeld.lang.xml"
+    file_out = "tests/data/tiny.emeld.lang.xml.out"
+    igt:Corpus = Emeld.read(file_in)
+    Emeld.write(igt, file_out)
+    igt_2: Corpus = Emeld.read(file_out)
+    assert igt == igt_2

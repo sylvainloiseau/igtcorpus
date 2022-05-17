@@ -21,22 +21,24 @@ class Emeld():
   """
 
   @classmethod
-  def read(cls, filename: str) -> Corpus:
+  def read(cls, filename: str, validate=False) -> Corpus:
     """
     Read an emeld document and turn it into an IGT object
     :param str filename: the XML Emeld document
+    :param bool validate: should the document be validated against an Emeld DTD
     :rtype: Corpus
     """
 
-    #dtd_string = pkg_resources.read_text(schema, "emeld.dtd")
-    dtd_string = pkgutil.get_data(__name__, "schema/emeld.dtd").decode('UTF-8')
-    dtd = ET.DTD(StringIO(dtd_string))
     doc = ET.parse(filename)
-    try:
-        dtd.assertValid(doc)
-    except Exception as e:
-        raise Exception("Emeld document is not valid.") from e
-        # + dtd.error_log.filter_from_errors()[0])
+    if validate:
+        #dtd_string = pkg_resources.read_text(schema, "emeld.dtd")
+        dtd_string = pkgutil.get_data(__name__, "schema/emeld.dtd").decode('UTF-8')
+        dtd = ET.DTD(StringIO(dtd_string))
+        try:
+            dtd.assertValid(doc)
+        except Exception as e:
+            raise Exception("Emeld document is not valid.") from e
+            # + dtd.error_log.filter_from_errors()[0])
 
     newroot = ET.Element("root") # we need an extra level for ease of recursion
     newroot.append(doc.getroot())
@@ -65,7 +67,8 @@ class Emeld():
       properties: Dict[str, str] = {}
       sub_unit: List[LingUnit] = []
       for i in e.iterchildren("item"):
-          properties[i.get("type")] = i.text or ""
+          data = Emeld._get_item_data(i)
+          properties[data[0]] = data[1]
       if (level_index + 1) < len(Emeld.ORDERED_LEVEL):
         sub_level_list_name = Emeld.ORDERED_LEVEL[level_index + 1][0] 
         sub_level_name = Emeld.ORDERED_LEVEL[level_index + 1][1] 
@@ -79,6 +82,17 @@ class Emeld():
           res = Morph(properties)
       else:
           res = Emeld.ORDERED_LEVEL[level_index][2](properties, sub_unit)
+      return res
+
+  @staticmethod
+  def _get_item_data(i) -> Tuple[str, str]:
+      type_attr = i.get("type")
+      if type_attr is None or type_attr == "":
+          raise Exception("type attribute cannot be null")
+      lang_attr = i.get("lang")
+      if lang_attr is not None and lang_attr != "":
+          type_attr = type_attr + "." + lang_attr
+      res = (type_attr, i.text or "")
       return res
 
   @staticmethod
@@ -102,6 +116,15 @@ class Emeld():
   def _populate_with_item(obj, node):
       for k, v in obj.items():
           item_node = ET.SubElement(node, "item")
-          item_node.set("type", str(k))
+
+          l = str(k).rsplit(".", 1)
+          print(l)
+          type_attr = l[0]
+          item_node.set("type", type_attr)
+
+          if (len(l) == 2):
+              lang_attr = l[1]
+              item_node.set("lang", lang_attr)
+
           item_node.text = str(v)
 

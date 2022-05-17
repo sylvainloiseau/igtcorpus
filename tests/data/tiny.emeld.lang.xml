@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+  <interlinear-text>
+    <item type="source">tests/data/BEJ_MV_CONV_01_RICH.EAF</item>
+    <paragraphs>
+      <paragraph>
+        <item type="speaker">SP1</item>
+        <phrases>
+          <phrase>
+            <item type="ft" lang="en"/>
+            <item type="participant">SP1</item>
+            <item type="id">a4932</item>
+            <words>
+              <word>
+                <morphemes/>
+              </word>
+            </words>
+          </phrase>
+          <phrase>
+            <item type="ft" lang="en">In the old days</item>
+            <item type="participant">SP1</item>
+            <item type="id">a4933</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="ara">suːr</item>
+                    <item type="gls" lang="en">before</item>
+                    <item type="id">a15527</item>
+                  </morph>
+                  <morph>
+                    <item type="txt" lang="ara">-eː</item>
+                    <item type="gls" lang="en">-GEN.PL</item>
+                    <item type="id">a15528</item>
+                  </morph>
+                  <morph>
+                    <item type="txt" lang="ara">-n</item>
+                    <item type="gls" lang="en">-L</item>
+                    <item type="id">a15529</item>
+                  </morph>
+                  <morph>
+                    <item type="txt" lang="ara">-eː</item>
+                    <item type="gls" lang="en">-GEN.PL</item>
+                    <item type="id">a15530</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="ara">i=</item>
+                    <item type="gls" lang="en">DEF.M=</item>
+                    <item type="id">a15531</item>
+                  </morph>
+                </morphemes>
+              </word>
+            </words>
+          </phrase>
+        </phrases>
+      </paragraph>
+    </paragraphs>
+  </interlinear-text>
+</document>
