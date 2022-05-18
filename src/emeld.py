@@ -68,6 +68,8 @@ class Emeld():
       sub_unit: List[LingUnit] = []
       for i in e.iterchildren("item"):
           data = Emeld._get_item_data(i)
+          if data[0] in properties:
+              raise Exception(f"duplicate entry: {data[0]}")
           properties[data[0]] = data[1]
       if (level_index + 1) < len(Emeld.ORDERED_LEVEL):
         sub_level_list_name = Emeld.ORDERED_LEVEL[level_index + 1][0] 

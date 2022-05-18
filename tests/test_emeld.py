@@ -97,6 +97,24 @@ class TestEmeld():
     res = Emeld._parse_emeld(doc, -1)
     assert Corpus({}, [Text({'source': 'x'}, [Paragraph({'x.tpi':'z'}, []), Paragraph({'x.en':'y'}, [])])]) == res
 
+  def test_parse_with_duplicate(foo):
+    doc_string = """<root><document>
+    <interlinear-text>
+    <item type="source">x</item>
+    <paragraphs>
+    <paragraph>
+    <item type="x" lang="tpi">z</item>
+    <item type="x" lang="tpi">x</item>
+    </paragraph>
+    </paragraphs>
+    </interlinear-text>
+    </document>
+    </root>
+    """
+    doc = ET.fromstring(doc_string)
+    with pytest.raises(Exception):
+      res = Emeld._parse_emeld(doc, -1)
+
   def test_readEmeld_not_valid(foo):
       with pytest.raises(Exception):
           c:Corpus = Emeld.read("tests/data/test.not_valid.emeld.xml")
