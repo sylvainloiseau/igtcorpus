@@ -53,7 +53,7 @@ class EmeldJson():
       return res
 
     @classmethod
-    def write(cls, corpus:Corpus, outfile: str):
+    def write(cls, corpus:Corpus, outfile: str, indent: Optional[int] = 4):
         """
         turn the corpus into a dictionary and serialise it as json.
         
@@ -82,10 +82,11 @@ class EmeldJson():
 
         :param str outfile: the file in which to write json struct.
         :return: None
+        :indent: indent in the json file
         """
         res = EmeldJson._walk_corpus(corpus, 0)
         out_file = open(outfile, "w")
-        json.dump(res, out_file, indent=4)
+        json.dump(res, out_file, indent=indent)
         out_file.close()
         #with open(outfile, "wb") as f:
         #  json.dump(res, f, indent=4)
