@@ -120,7 +120,7 @@ class Emeld():
           item_node = ET.SubElement(node, "item")
 
           l = str(k).rsplit(".", 1)
-          print(l)
+          #print(l)
           type_attr = l[0]
           item_node.set("type", type_attr)
 

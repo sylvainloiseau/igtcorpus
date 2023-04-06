@@ -6,7 +6,8 @@ from typing import Union, List, Dict, Set
 class ElanCorpoAfr():
  
   """
-  Turn an Elan file following the ElanCorpoAfr template () into an  an IGT (hierachy of paragraphes, sentences, words, morphs)
+  Turn an Elan file following the ElanCorpoAfr template () into an 
+  IGT (hierachy of paragraphes, sentences, words, morphs)
   """
 
   @classmethod
