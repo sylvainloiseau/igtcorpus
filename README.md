@@ -14,7 +14,32 @@ pip install git+https://github.com/sylvainloiseau/igtcorpus.git#egg=igtcorpus
 
 # Usage
 
+Command line interface:
 
+```console
+$ igtc -i input.xml -o output.json -f emeld -t json 
+```
+
+See the doc:
+
+```
+$ igtc -h
+usage: igtc [-h] [--verbose] --output OUTPUT --input INPUT --fromformat {json,emeld,elan} --toformat {json,emeld,conll}
+
+Utilities for converting between interlinear glossed texts formats.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --verbose, -v         output detailled information
+  --output OUTPUT, -o OUTPUT
+                        output file
+  --input INPUT, -i INPUT
+                        input file
+  --fromformat {json,emeld,elan}, -f {json,emeld,elan}
+                        input file format
+  --toformat {json,emeld,conll}, -t {json,emeld,conll}
+                        output file format
+```
 
 # API
 
