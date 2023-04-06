@@ -10,7 +10,7 @@ class LingUnit():
     
     def get_properties(self) -> Properties:
         return self.properties
-
+    
 @dataclass
 class NonTerminalLingUnit(LingUnit):
 
@@ -41,6 +41,18 @@ class Text(NonTerminalLingUnit): pass
 
 @dataclass
 class Corpus(NonTerminalLingUnit): pass
+
+    # def add_property(level: Type[LingUnit], name, func):
+    #       # TODO check for type
+    #       _rec_apply(level, name, funct, self)
+
+    # def _rec_apply(level, name, func, unit):
+    #     if type(unit) != level:
+    #         for u in unit.get_sub_unit():
+    #             _rec_apply(level, name, func, u)
+    #     else:
+    #         unit.properties[name] = func(unit)
+
 
 LEVELS :List[Type[LingUnit]] = [ Corpus, Text, Paragraph, Sentence, Word, Morph ]
 SUBLEVEL4LEVEL = dict(zip([None] + LEVELS, LEVELS + [None]))
