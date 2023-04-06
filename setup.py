@@ -10,7 +10,7 @@ setuptools.setup(
     name="igtcorpus",
     author_email="sylvain.loiseau@univ-paris13.fr",
     author="Sylvain Loiseau",
-    version="0.0.2",
+    version="0.0.3",
     description="Importer for IGT (interlinear glossed texts).",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -37,5 +37,8 @@ setuptools.setup(
     # For dependencies not on pyPI:
     #dependency_links=['http://github.com/user/repo/tarball/master#egg=package-1.0']
     python_requires=">=3.7",
+    entry_points = {
+        'console_scripts': ['igtc=igtcorpus.cli:igtc']
+    }
 )
 
