@@ -19,7 +19,7 @@ class NonTerminalLingUnit(LingUnit):
     def get_sub_units(self) -> Sequence[LingUnit]:
         return self.sub_units
 
-    def get(self, level: Type[LingUnit]):
+    def get(self, level: Type[LingUnit]) -> Sequence[LingUnit]:
         if not level == SUBLEVEL4LEVEL[type(self)]:
             raise Exception(f"{str(self.__class__)} does not contain {str(level)}")
         return self.get_sub_units()
