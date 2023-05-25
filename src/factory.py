@@ -32,11 +32,11 @@ LEVEL_INDEX : Dict[Type[LingUnit], int]  = dict([(l, i) for i, l in enumerate(LE
 
 UnitCountType    = Dict[Type[LingUnit], int]
 AccumulatorType  = Dict[Type[LingUnit], Sequence[LingUnit]] 
-PropertyListType = Dict[Type[LingUnit], Dict[str, int]] 
+PropertyListType = Dict[Type[LingUnit], Properties] 
 
 class CorpusFactory():
   """
-  Create piece by piece.
+  Create a corpus piece by piece.
   """
 
   def __init__(self):
@@ -51,10 +51,8 @@ class CorpusFactory():
   def createMorph(self, properties: Properties) -> None:
       if self.currently_in != Word:
           raise Exception(f"Can't create Morph while in { str(self.currently_in) }")
-      self.accumulator[Morph].append(
-              self.unit_factory.createMorph(properties)
-              )
-      self._check_properties(Morph, properties)
+      self.accumulator[Morph].append( self.unit_factory.createMorph(properties))
+      self._register_properties(Morph, properties)
       self._increment(Morph)
 
   def start_unit(self, level: Type[NonTerminalLingUnit], properties: Properties = {}) -> None:
@@ -84,28 +82,24 @@ class CorpusFactory():
         raise Exception(f"Trying to close { level } while in { self.currently_in }")
       li = LEVEL_INDEX[level] 
       sublevel = LEVELS[li + 1]
-      self.accumulator[level].append(
-        self.unit_factory.createNonTerminalUnit(
-          level,
-          self.current_unit_property[level],
-          self.accumulator[ sublevel ]
-        )
-      )
-      self.accumulator[ sublevel ] = []
+      unit = self.unit_factory.createNonTerminalUnit(level, self.current_unit_property[level], self.accumulator[sublevel])
+      self.accumulator[level].append(unit)
+
+      self.accumulator[sublevel] = []
+      self.current_unit_property[level] = {}
       self._increment(level)
-      self._check_properties(level, self.current_unit_property[level])
+      self._register_properties(level, self.current_unit_property[level])
 
       if level == Corpus:
           self.currently_in = None
       else:
           self.currently_in = LEVELS[li - 1]
-          self.current_unit_property[level] = {}
 
   def get_corpus(self, corpus_properties: Properties = {}) -> Corpus:
-      if len(self.accumulator[Corpus]) < 1:
-          raise Exception("No corpus created")
       if self.currently_in != None:
           raise Exception("Can't build the corpus while some unit are still open")
+      if len(self.accumulator[Corpus]) < 1:
+          raise Exception("No corpus created")
       return self.accumulator[Corpus][0]
 
   def get_occ_nbr_for_level(self, level:Type[LingUnit]) -> int:
@@ -117,7 +111,7 @@ class CorpusFactory():
   def _increment(self, level: Type[LingUnit]) -> None:
       self.nb_unit[level] += 1
 
-  def _check_properties(self, level, properties) -> None:
+  def _register_properties(self, level, properties) -> None:
       for k in properties.keys():
           if k in self.properties_list[ level ]:
               self.properties_list[ level ][k] += 1
