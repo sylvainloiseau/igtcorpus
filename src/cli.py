@@ -34,7 +34,14 @@ def _igtc_callback(arg: argparse.Namespace) -> None:
     elif t == "json":
         EmeldJson.write(corpus, o)
     elif t == "conll":
-        Conll.write(corpus, o)
+        Conll.write(corpus, o,
+                morph_txt_field="txt" + "." + arg.olanguage,
+                sentence_ft_field="gls" + "." + arg.mlanguage,
+                morph_lemma_field="cf" + "." + arg.olanguage,
+            #sentence_extra_field:List[str]=[],
+            morph_pos_field="msa" + "." + arg.mlanguage,
+            morph_extra_field = [("gls" + "." + arg.mlanguage, "Gloss")]
+                )
     else:
         raise _exit_with_error_msg(f"Unsupported output format: {t}")
 
@@ -56,6 +63,8 @@ def igtc() -> None:
     parser.add_argument('--input', '-i', help='input file', required=True)
     parser.add_argument('--fromformat', '-f', help='input file format', choices=["json", "emeld", "elan"], required=True, default="emeld")
     parser.add_argument('--toformat', '-t', help='output file format', choices=["json", "emeld", "conll"], required=True, default="conll")
+    parser.add_argument('--olanguage', '-l', help='Object language', required=True)
+    parser.add_argument('--mlanguage', '-m', help='Meta language', required=True)
     parser.set_defaults(func=_igtc_callback)
 
     if len(sys.argv) <= 1:
@@ -67,6 +76,8 @@ def igtc() -> None:
     for arg in vars(argument):
         LOGGER.info(f"Argument: {arg}, / {getattr(argument, arg)}")
 
-    if not os.access(argument.input, os.R_OK):
+    p = Path(argument.input)
+    # if not os.access(argument.input, os.R_OK):
+    if not p.expanduser().exists():
         _exit_with_error_msg(f"{argument.input} is not readable")
     argument.func(argument)

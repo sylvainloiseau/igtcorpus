@@ -17,7 +17,8 @@ pip install git+https://github.com/sylvainloiseau/igtcorpus.git#egg=igtcorpus
 Command line interface:
 
 ```console
-$ igtc -i input.xml -o output.json -f emeld -t json 
+$ igtc -i input.xml -o output.json -f emeld -t json -l tww -m en
+$ # igtc --output=/Users/sloiseau/Downloads/conll --input=/Users/sloiseau/Downloads/2014T1.xml --fromformat=emeld --toformat=conll -l tww -m en
 ```
 
 See the doc:
@@ -39,6 +40,10 @@ optional arguments:
                         input file format
   --toformat {json,emeld,conll}, -t {json,emeld,conll}
                         output file format
+  --olanguage OLANGUAGE, -l OLANGUAGE
+                        Object language
+  --mlanguage MLANGUAGE, -m MLANGUAGE
+                        Meta language
 ```
 
 # API

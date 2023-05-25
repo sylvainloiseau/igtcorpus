@@ -1,6 +1,6 @@
 from pathlib import Path
 from igtcorpus.igt import Corpus, Text, Paragraph, Sentence, Word, Morph, Properties, LingUnit
-from typing import List
+from typing import List, Tuple
 import os.path 
 
 
@@ -20,7 +20,7 @@ class Conll():
             morph_txt_field="txt",
             morph_lemma_field="lemma",
             morph_pos_field="pos",
-            morph_extra_field:List[str]=[]) -> None:
+            morph_extra_field:List[Tuple[str, str]]=[]) -> None:
       """
       Write a corpus as Conll-U document(s)
 
@@ -104,10 +104,10 @@ class Conll():
   def _get_extra(prop:Properties, extra_field: List[str]):
       if len(extra_field) == 0:
           return Conll.EMPTY_FIELD
-      fs = list(filter(lambda x : x in prop, extra_field))
+      fs = list(filter(lambda x : x[0] in prop, extra_field))
       if len(fs) == 0:
           return Conll.EMPTY_FIELD
-      ps = {key: prop[key] for key in fs}
+      ps = {tup[1]: prop[tup[0]] for tup in fs}
       return '|'.join(key + "=" + value for key, value in ps.items())
 
   @staticmethod
