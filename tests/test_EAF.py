@@ -1,5 +1,5 @@
 from igtcorpus.elan import ElanCorpoAfr
-from igtcorpus.igt import Corpus
+from igtcorpus.corpusobj import Corpus
 from igtcorpus.emeld import Emeld
 import pytest
 

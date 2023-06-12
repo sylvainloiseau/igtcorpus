@@ -1,6 +1,6 @@
 from pympi.Elan import Eaf
-from igtcorpus.igt import Corpus, Text, Paragraph, Sentence, Word, Morph 
-from igtcorpus.factory import UnitFactory
+from igtcorpus.corpusobj import Corpus, Text, Paragraph, Sentence, Word, Morph 
+from igtcorpus.corpusobj_factory import UnitFactory
 from typing import Union, List, Dict, Set
 
 class ElanCorpoAfr():

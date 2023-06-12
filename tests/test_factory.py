@@ -1,5 +1,5 @@
-from igtcorpus.igt import Corpus, Text, Paragraph, Sentence, Word, Morph
-from igtcorpus.factory import CorpusFactory
+from igtcorpus.corpusobj import Corpus, Text, Paragraph, Sentence, Word, Morph
+from igtcorpus.corpusobj_factory import CorpusFactory
 import pytest
 
 class TestFactory:

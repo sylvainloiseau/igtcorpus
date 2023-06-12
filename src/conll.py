@@ -1,5 +1,5 @@
 from pathlib import Path
-from igtcorpus.igt import Corpus, Text, Paragraph, Sentence, Word, Morph, Properties, LingUnit
+from igtcorpus.corpusobj import Corpus, Text, Paragraph, Sentence, Word, Morph, Properties, LingUnit
 from typing import List, Tuple
 import os.path 
 

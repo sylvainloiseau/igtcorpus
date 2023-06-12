@@ -32,13 +32,17 @@ setuptools.setup(
           'lxml>=4.6.3',
           'pytest>=6.2.5',
           'pympi-ling>=1.70.2',
-          'attrs>=21.2.0'
+          'attrs>=21.2.0',
+          'pandas>=1.3.5'          
     ],
     # For dependencies not on pyPI:
     #dependency_links=['http://github.com/user/repo/tarball/master#egg=package-1.0']
     python_requires=">=3.7",
     entry_points = {
-        'console_scripts': ['igtc=igtcorpus.cli:igtc']
+        'console_scripts': [
+            'igtc=igtcorpus.cli:igtc',
+            'emeld=igtcorpus.cli:emeld'
+            ]
     }
 )
 

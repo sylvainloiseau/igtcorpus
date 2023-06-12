@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- one interlinear-text, one paragraph, two phrases, one with a word without morphems and the other with 2 words of resp. 4 and 1 morphemes long -->
 <document>
   <interlinear-text>
     <item type="source">tests/data/BEJ_MV_CONV_01_RICH.EAF</item>

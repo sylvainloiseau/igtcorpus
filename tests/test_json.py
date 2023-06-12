@@ -1,4 +1,4 @@
-from igtcorpus.igt import Corpus, Text
+from igtcorpus.corpusobj import Corpus, Text
 from igtcorpus.emeld import Emeld
 from igtcorpus.json import EmeldJson
 import pytest

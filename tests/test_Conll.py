@@ -1,4 +1,4 @@
-from igtcorpus.igt import Corpus, Text, Paragraph
+from igtcorpus.corpusobj import Corpus, Text, Paragraph
 from igtcorpus.conll import Conll
 from igtcorpus.emeld import Emeld
 import pytest

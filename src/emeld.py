@@ -1,14 +1,22 @@
 from lxml import etree as ET
 from pathlib import Path
-from igtcorpus.igt import Corpus, Text, Paragraph, Sentence, Word, Morph, Properties, LingUnit
+from igtcorpus.corpusobj import Corpus, Text, Paragraph, Sentence, Word, Morph, Properties, LingUnit
 from typing import Union, Any, List, Tuple, Dict
 from io import StringIO
 import pkgutil
+import xml
+import pandas as pd
+#from igtcorpus.corpustable import CorpusTable # circular import with Emeld
 
 class Emeld():
+  
+  ITEM_ELEMENT = "item"
+  LANG_ATTR = "lang"
+  TYPE_ATTR = "type"
 
   MULTI_KEY_SEP = "/"
-
+  TYPE_LANG_SEPARATOR = "."
+  
   ORDERED_LEVEL = [
           ("document", "interlinear-text", Text),
           ("paragraphs","paragraph", Paragraph),
@@ -22,6 +30,34 @@ class Emeld():
   Cathy Bow, Baden Hughes, Steven Bird, "Towards a general model of interlinear text"
   """
 
+  def __init__(self, filename, validate=False):
+      self.filename = filename
+      self.doc = None
+      if validate:
+          self.validate()
+
+  def _load_doc(self):
+      self.doc = ET.parse(self.filename)
+
+  def validate(self):
+    #dtd_string = pkg_resources.read_text(schema, "emeld.dtd")
+    if self.doc is None:
+        self._load_doc()
+    dtd_string = pkgutil.get_data(__name__, "schema/emeld.dtd").decode('UTF-8')
+    dtd = ET.DTD(StringIO(dtd_string))
+    try:
+        dtd.assertValid(self.doc)
+    except Exception as e:
+        raise Exception("Emeld document is not valid.") from e
+        # + dtd.error_log.filter_from_errors()[0])
+      
+  def create_corpus_obj(self) -> Corpus:
+    newroot = ET.Element("root") # we need an extra level for ease of recursion
+    newroot.append(self.doc.getroot())
+    corpus = Emeld._parse_emeld(newroot, level_index=-1)
+    return corpus
+
+  # TODO remove
   @classmethod
   def read(cls, filename: str, validate=False) -> Corpus:
     """
@@ -46,7 +82,7 @@ class Emeld():
     newroot.append(doc.getroot())
     corpus = Emeld._parse_emeld(newroot, level_index=-1)
     return corpus
-    
+
   @classmethod
   def write(cls, igt: Corpus, outfile: str) -> None:
     """
@@ -98,7 +134,7 @@ class Emeld():
           raise Exception("type attribute cannot be null")
       lang_attr = i.get("lang")
       if lang_attr is not None and lang_attr != "":
-          type_attr = type_attr + "." + lang_attr
+          type_attr = type_attr + Emeld.TYPE_LANG_SEPARATOR + lang_attr
       res = (type_attr, i.text or "")
       return res
 
@@ -135,3 +171,67 @@ class Emeld():
 
           item_node.text = str(v)
 
+class EmeldToTableCorpusDom():
+
+    """
+    Produce a :class:`CorpusTable` through an in-memory method.
+    Deprecated. Please use :class:`EmeldReader`
+    """
+
+    @staticmethod
+    def from_emeld(filename: str):
+        doc = ET.parse(filename)
+        
+        # newroot = etree.Element("root") # we need an extra level for ease of recursion
+        # newroot.append(doc.getroot())
+
+        tables = dict()
+
+        path = ""
+        for i, level in enumerate(Emeld.ORDERED_LEVEL):
+            path = path + "/" + level[0] + "/" + level[1]
+            unit = level[2]
+            if unit != Morph:
+                sub_unit = Emeld.ORDERED_LEVEL[i + 1]
+                sub_unit_path = sub_unit[0] + "/" + sub_unit[1]
+            else:
+                sub_unit_path = None
+            table = CorpusTable._create_table(level[2], path, doc, sub_unit_path)
+            tables[unit] = table
+
+        return CorpusTable(tables)
+
+    @staticmethod
+    def _create_table(level_name, path, doc, sub_unit_path):
+        print(path)
+        
+        nodes = doc.xpath(path)
+
+        n = len(nodes)
+        print(n)
+        print(nodes[0].tag)
+        
+        table = pd.DataFrame()
+        table.index = range(1,n+1)
+        table.columns = pd.MultiIndex.from_arrays([[], []], names=["field", "lang"])
+        table["id", ""] = [node.get("id") for node in nodes]
+        for i, node in enumerate(nodes):
+            #print(node.tag)
+            items = node.findall("item")
+            #print(len(items))
+            for j, item in enumerate(items):
+                #print(etree.tostring(node))
+                lang = item.get("lang")
+                type = item.get("type")
+                if lang is None:
+                    lang = ""
+                if not table.columns.isin([(type, lang)]).any():
+                    table[type, lang] = [0] * table.shape[0]
+                    
+                table[type, lang][j] = item.text
+
+        sub_unit_n = None
+        if sub_unit_path is not None:
+            sub_unit_n = [len(node.findall(sub_unit_path)) for node in nodes]
+
+        return table
