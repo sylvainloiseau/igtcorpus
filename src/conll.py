@@ -2,11 +2,12 @@ from pathlib import Path
 from igtcorpus.corpusobj import Corpus, Text, Paragraph, Sentence, Word, Morph, Properties, LingUnit
 from typing import List, Tuple
 import os.path 
-
+import logging
 
 class Conll():
 
   EMPTY_FIELD = "_"
+  LOGGER = logging.getLogger(__name__)
 
   @classmethod
   def write(cls,
@@ -54,7 +55,31 @@ class Conll():
                           ".".join([textname, str(j), str(k)]))
 
                   s_text = Conll._get_value_or_default(sentence, sentence_text_field, "")
-                  s_text = s_text or " ".join(m.get_properties()[morph_txt_field] for m in morphs)  
+                  
+                  #s_text = s_text or " ".join(m.get_properties()[morph_txt_field] for m in morphs)  
+                  txts = [""] * len(morphs)
+                  for i, m in enumerate(morphs):
+                      p = m.get_properties()
+                      try:
+                        txt = p[morph_txt_field]
+                      except KeyError:
+                        Conll.LOGGER.warning(f"No attribute {morph_txt_field} for some morph {m}, in text ?.") # TODO {text.get_properties()['id']}
+                        ks = p.keys()
+                        if "txt" in ks:
+                           txt = p["txt"]
+                           Conll.LOGGER.warning("Defaulting to 'txt'")
+                        else:
+                            tk = [k for k in p.keys() if k.startswith('txt')]
+                            if len(tk) > 0:
+                                txt = p[tk[0]]
+                                Conll.LOGGER.warning(f"Defaulting to '{tk[0]}'")
+                            else:
+                                Conll.LOGGER.warning("No text found")
+                                txt = ""
+                      txts[i] = txt
+                  s_text = s_text or " ".join(txt for txt in txts)
+                        
+                      #raise Exception(f"No attribute {morph_txt_field} for some morph {morphs}, in text {text}")
 
                   s_text_en = Conll._get_value_or_default(sentence, sentence_ft_field, "_")
 

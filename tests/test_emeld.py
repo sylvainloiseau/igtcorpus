@@ -144,5 +144,6 @@ class TestEmeldReader():
     igt:Corpus = Emeld.read(file_in)
     Emeld.write(igt, file_out)
     igt_2: Corpus = Emeld.read(file_out)
+    print(file_out)
     assert igt == igt_2
 

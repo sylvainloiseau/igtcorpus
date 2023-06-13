@@ -7,20 +7,24 @@ import pkgutil
 import xml
 import pandas as pd
 #from igtcorpus.corpustable import CorpusTable # circular import with Emeld
+import logging
 
 class Emeld():
   
+  LOGGER = logging.getLogger(__name__)
+
   ITEM_ELEMENT = "item"
   LANG_ATTR = "lang"
   TYPE_ATTR = "type"
 
   MULTI_KEY_SEP = "/"
   TYPE_LANG_SEPARATOR = "."
+  EMPTY_STRING = ""
   
   ORDERED_LEVEL = [
           ("document", "interlinear-text", Text),
           ("paragraphs","paragraph", Paragraph),
-          ("phrases","phrase", Sentence),
+          ("phrases","word", Sentence),
           ("words","word", Word),
           ("morphemes","morph", Morph)]
 
@@ -107,9 +111,10 @@ class Emeld():
       for i in e.iterchildren("item"):
           data = Emeld._get_item_data(i)
           if data[0] in properties:
+              if data[1] != Emeld.EMPTY_STRING:
               #raise Exception(f"duplicate entry: {data[0]}")
-              print(f"duplicate entry: {data[0]}")
-              properties[data[0]] = properties[data[0]] + Emeld.MULTI_KEY_SEP + data[1]
+              #print(f"duplicate entry: {data[0]}; in: {properties}")
+                properties[data[0]] = properties[data[0]] + Emeld.MULTI_KEY_SEP + data[1]
           else:
               properties[data[0]] = data[1]
       if (level_index + 1) < len(Emeld.ORDERED_LEVEL):
