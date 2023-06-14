@@ -35,104 +35,108 @@ class Conll():
       :param str morph_txt_field: property holding the text of token unit.
       :param str morph_lemma_field: property holding the lemma of token unit. If None or non existing, "_" is used
       :param str morph_pos_field: property holding the pos of token unit. If None or non existing, "_" is used
-      :param str morph_extra_field: other properties of morph units to be recopied in the extra column for each morph.
+      :param str morph_extra_field: other properties of morph units to be recopied in the extra (MISC) column for each morph. Each element of the list is a tuple (conll name / property).
       """
 
       if not os.path.isdir(outdir):
           raise Exception(f"Not a directory: {outdir}")
 
-      for i, text in enumerate(corpus.get(Text)):
-          textname = Conll._get_value_or_default(text, text_name_field, str(i))
+      for ti, text in enumerate(corpus.get(Text)):
+          text_properties = text.get_properties()
+          textname = Conll._get_prop_or_default(text_properties, text_name_field, str(ti))
           filename = outdir + "/" + textname + ".conll"
           f = open(filename, 'w')
-          for j, paragraph in enumerate(text.get(Paragraph)):
-              for k, sentence in enumerate(paragraph.get(Sentence)):
+          for pi, paragraph in enumerate(text.get(Paragraph)):
+              for si, sentence in enumerate(paragraph.get(Sentence)):
+                  sentence_properties = sentence.get_properties()
                   morphs_by_words: List[List[Morph]] = [w.get(Morph) for w in sentence.get(Word)]
                   morphs: List[Morph] = [m for ms in morphs_by_words for m in ms]
 
-                  s_id = Conll._get_value_or_default( sentence,
-                          sentence_id_field,
-                          ".".join([textname, str(j), str(k)]))
+                  s_id = Conll._get_prop_or_default(
+                      sentence_properties,
+                      sentence_id_field,
+                      "/".join([str(pi), str(si)])
+                  )
 
-                  s_text = Conll._get_value_or_default(sentence, sentence_text_field, "")
-                  
-                  #s_text = s_text or " ".join(m.get_properties()[morph_txt_field] for m in morphs)  
-                  txts = [""] * len(morphs)
-                  for i, m in enumerate(morphs):
-                      p = m.get_properties()
-                      try:
-                        txt = p[morph_txt_field]
-                      except KeyError:
-                        Conll.LOGGER.warning(f"No attribute {morph_txt_field} for some morph {m}, in text ?.") # TODO {text.get_properties()['id']}
-                        ks = p.keys()
-                        if "txt" in ks:
-                           txt = p["txt"]
-                           Conll.LOGGER.warning("Defaulting to 'txt'")
-                        else:
-                            tk = [k for k in p.keys() if k.startswith('txt')]
-                            if len(tk) > 0:
-                                txt = p[tk[0]]
-                                Conll.LOGGER.warning(f"Defaulting to '{tk[0]}'")
-                            else:
-                                Conll.LOGGER.warning("No text found")
-                                txt = ""
-                      txts[i] = txt
-                  s_text = s_text or " ".join(txt for txt in txts)
-                        
-                      #raise Exception(f"No attribute {morph_txt_field} for some morph {morphs}, in text {text}")
-
-                  s_text_en = Conll._get_value_or_default(sentence, sentence_ft_field, "_")
+                  s_text = Conll._get_prop_or_default(sentence_properties, sentence_text_field, "")
+                  forms = Conll._get_forms(morphs, morph_txt_field)
+                  s_text = s_text or " ".join(txt for txt in forms)
+                  s_text_en = Conll._get_prop_or_default(sentence_properties, sentence_ft_field, Conll.EMPTY_FIELD)
 
                   Conll._write_sentence_field(f, "sent_id", s_id)
                   Conll._write_sentence_field(f, "text", s_text)
                   Conll._write_sentence_field(f, "text_en", s_text_en)
+                  Conll._write_sentence_field(f, "doc_id", textname)
 
                   for sfield in sentence_extra_field:
-                      sv = Conll._get_value_or_default(sentence, sfield, "_")
+                      sv = Conll._get_prop_or_default(sentence_properties, sfield, "_")
                       Conll._write_sentence_field(f, sfield, sv)
 
-                  for l, m in enumerate(morphs):
+                  for im, m in enumerate(morphs):
                       props = m.get_properties()
-
-                      txt = Conll._get_field(props, morph_txt_field)
-                      lemma = Conll._get_field(props, morph_lemma_field)
-                      pos = Conll._get_field(props, morph_pos_field)
+                      txt = forms[im]
+                      lemma = Conll._get_prop_or_empty(props, morph_lemma_field)
+                      pos = Conll._get_prop_or_empty(props, morph_pos_field)
                       extra = Conll._get_extra(props, morph_extra_field)
-                      token_cols = [str(l + 1), txt, lemma, pos,
-                              Conll.EMPTY_FIELD,
-                              Conll.EMPTY_FIELD,
-                              Conll.EMPTY_FIELD,
-                              Conll.EMPTY_FIELD,
-                              Conll.EMPTY_FIELD,
-                              extra]
-                      Conll._write_token(f, token_cols)
+                      token_columns = [str(im + 1),
+                                    txt,
+                                    lemma,
+                                    pos,
+                                    Conll.EMPTY_FIELD,
+                                    Conll.EMPTY_FIELD,
+                                    Conll.EMPTY_FIELD,
+                                    Conll.EMPTY_FIELD,
+                                    Conll.EMPTY_FIELD,
+                                    extra
+                      ]
+                      Conll._write_token(f, token_columns)
                   Conll._write_sentence_sep(f)
           f.close()
 
   @staticmethod
-  def _get_value_or_default(unit, mykey, default="") -> str:
-      props = unit.get_properties()
-      if mykey is not None and mykey in props:
-          res = props[mykey] or default
-      else:
-          res = default
-      return res
+  def _get_forms(morphs: List[Morph], morph_txt_field) -> List[str]:
+    #s_text = s_text or " ".join(m.get_properties()[morph_txt_field] for m in morphs)  
+    txts = [""] * len(morphs)
+    for mi, m in enumerate(morphs):
+        p = m.get_properties()
+        ks = p.keys()
+        if morph_txt_field in ks:
+            txt = p[morph_txt_field]
+        else:
+            Conll.LOGGER.warning(f"No attribute {morph_txt_field} for morph {m}.")
+            if "txt" in ks:
+                txt = p["txt"]
+                Conll.LOGGER.warning("Defaulting to 'txt'")
+            else:
+                tk = [si for si in p.keys() if si.startswith('txt')]
+                if len(tk) > 0:
+                    txt = p[tk[0]]
+                    Conll.LOGGER.warning(f"Defaulting to '{tk[0]}'")
+                else:
+                    Conll.LOGGER.warning("No text found")
+                    txt = Conll.EMPTY_FIELD
+        txts[mi] = txt
+    return txts
 
   @staticmethod
-  def _get_field(properties:Properties, field):
-      if field in properties and properties[field] is not None:
-          return properties[field]
+  def _get_prop_or_default(props:Properties, key:str, default="") -> str:
+      if key is not None and key in props and props[key] is not None:
+          return props[key]
       else:
-          return Conll.EMPTY_FIELD
+          return default
 
   @staticmethod
-  def _get_extra(prop:Properties, extra_field: List[str]):
+  def _get_prop_or_empty(props:Properties, key:str):
+      return Conll._get_prop_or_default(props, key, Conll.EMPTY_FIELD)
+
+  @staticmethod
+  def _get_extra(prop:Properties, extra_field: List[Tuple[str, str]]):
       if len(extra_field) == 0:
           return Conll.EMPTY_FIELD
-      fs = list(filter(lambda x : x[0] in prop, extra_field))
-      if len(fs) == 0:
+      tuples = list(filter(lambda x : x[1] in prop, extra_field))
+      if len(tuples) == 0:
           return Conll.EMPTY_FIELD
-      ps = {tup[1]: prop[tup[0]] for tup in fs}
+      ps = {tuple[0]: prop[tuple[1]] for tuple in tuples}
       return '|'.join(key + "=" + value for key, value in ps.items())
 
   @staticmethod

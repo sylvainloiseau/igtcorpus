@@ -19,11 +19,11 @@ def test_emeld2json(capsys, caplog, tmp_path):
     LOGGER.info(out)
     LOGGER.info("Output file: {output_filename}")
 
-def test_emeld2conll_tww(capsys, caplog, tmp_path):
-    output_filename = ""
-    out = _run_igtc(["igtc", "-i", "/home/sylvain/Corpus/Tuwari/EmeldLift/INTERLINEAR20230613.xml", "-o", "/home/sylvain/Corpus/Tuwari/Conversion/conllu/conll/", "-f", "emeld", "-t", "conll", "-l", "tww", "-m", "en"], capsys, caplog, tmp_path)
-    LOGGER.info(out)
-    LOGGER.info("Output file: {output_filename}")
+# def test_emeld2conll_tww(capsys, caplog, tmp_path):
+#     output_filename = ""
+#     out = _run_igtc(["igtc", "-i", "/home/sylvain/Corpus/Tuwari/EmeldLift/INTERLINEAR20230613.xml", "-o", "/home/sylvain/Corpus/Tuwari/Conversion/conllu/conll/", "-f", "emeld", "-t", "conll", "-l", "tww", "-m", "en"], capsys, caplog, tmp_path)
+#     LOGGER.info(out)
+#     LOGGER.info("Output file: {output_filename}")
 
 def _run_emeld(args, capsys, caplog, tmp_path):
     _run_cli("emeld", args, capsys, caplog, tmp_path)

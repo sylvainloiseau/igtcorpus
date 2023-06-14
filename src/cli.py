@@ -54,7 +54,7 @@ def _igtc_callback(arg: argparse.Namespace) -> None:
                 morph_lemma_field=morph_lemma_field,
                 #sentence_extra_field:List[str]=[],
                 morph_pos_field=morph_pos_field,
-                morph_extra_field = [(morph_extra_field_str, "Gloss")]
+                morph_extra_field = [("Gloss", morph_extra_field_str)]
                 )
     else:
         raise _exit_with_error_msg(f"Unsupported output format: {t}")
