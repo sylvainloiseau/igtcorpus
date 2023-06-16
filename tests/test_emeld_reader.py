@@ -8,9 +8,9 @@ class TestEmeldSpecContentHandler():
     handler = EmeldSpecContentHandler()
     xml.sax.parse(filename, handler)
     spec = handler.get_emeld_spec()
-    assert spec[EmeldUnit.text][0] == 1
-    assert spec[EmeldUnit.morph][0] == 5
-    assert len(spec[EmeldUnit.phrase][1]) == 3 # there is 3 distinct field on phrase
+    assert spec[EmeldUnit.text].occ == 1
+    assert spec[EmeldUnit.morph].occ == 5
+    assert len(list(spec[EmeldUnit.phrase].fields.keys())) == 3 # there is 3 distinct field on phrase
 
 class TestEmeldPopulateContentHandler():
 

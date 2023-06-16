@@ -1,3 +1,4 @@
+from dataclasses import dataclass, field
 from typing import Union, Any, List, Tuple, Dict, Set
 from io import StringIO
 import pkgutil
@@ -25,9 +26,24 @@ class EmeldUnit(Enum):
             self.next = first
 
 NumberOccInt = int
-TypeStr = str
-LangStr = str
-EmeldSpecDict = Dict[EmeldUnit, Tuple[NumberOccInt, Set[Tuple[TypeStr, LangStr]]]]
+
+AttrType=str
+AttrLang=str
+
+FieldCoordinate=Tuple[AttrType, AttrLang]
+
+@dataclass
+class LevelSpec():
+    occ: int = 0
+    fields: Dict[FieldCoordinate, NumberOccInt] = field(default_factory=dict)
+    def add_occ(self, FieldCoordinate):
+        if FieldCoordinate in self.fields:
+            self.fields[FieldCoordinate] += 1
+        else:
+            self.fields[FieldCoordinate] = 1
+
+
+EmeldSpecDict = Dict[EmeldUnit, LevelSpec]
 
 class EmeldReader():
   """ Encapsulate the access to XML SAX Reader."""
@@ -58,50 +74,59 @@ class EmeldReader():
 
 class EmeldSpecContentHandler(ContentHandler):
     
-    """This class should not be used directly. See EmeldReader"""
+    """
+    This class should not be used directly. See :class:`EmeldReader`.
+
+    A SAX ContentHandler that count the number of occurrences
+    for each level and each field in each level.
+    """
 
     def startDocument(self) -> None:
-        self.counter: Dict[EmeldUnit, int] = {u: 0 for u in list(EmeldUnit)}
+        self.emeldSpecDict: EmeldSpecDict = {u: LevelSpec() for u in list(EmeldUnit)}
+
         self.name_to_type: Dict[str, EmeldUnit] = {u.name: u for u in list(EmeldUnit)}
         # special case of XML element local name that can't be used as python name
         self.name_to_type["interlinear-text"] = EmeldUnit.text
-        self.fields: Dict[EmeldUnit, Set[Tuple(str, str)]] = {u: set() for u in list(EmeldUnit)}
-        self.current_element : EmeldUnit = EmeldUnit.text
+
+        self.current_level : EmeldUnit = EmeldUnit.text
 
     def startElement(self, name, attrs) -> None:
         if name in self.name_to_type:
             level = self.name_to_type[name]
-            self.counter[level] += 1
-            self.current_element = level
+            self.emeldSpecDict[level].occ += 1
+            self.current_level = level
 
         if name == Emeld.ITEM_ELEMENT:
             type = attrs.get(Emeld.TYPE_ATTR)
             lang = attrs.get(Emeld.LANG_ATTR)
-            (self.fields[self.current_element]).add((type, lang))
+            self.emeldSpecDict[self.current_level].add_occ((type, lang))
 
     def endElement(self, name) -> None:
         if name in self.name_to_type:
-            self.current_element = self.name_to_type[name].next
+            self.current_level = self.name_to_type[name].next
 
     def get_emeld_spec(self) -> EmeldSpecDict:
-        return {u: (self.counter[u],  self.fields[u]) for u in list(EmeldUnit)}
+        return self.emeldSpecDict
 
 class EmeldPopulateContentHandler(ContentHandler):
 
     PARENT_COLUMN = ".parent"
     EMPTY_STR = ""
 
-    def __init__(self, spec):
-        self.spec = spec
+    def __init__(self, spec: EmeldSpecDict):
+        self.spec: EmeldSpecDict = spec
         self.counter: Dict[EmeldUnit, int] = {u: -1 for u in list(EmeldUnit)}
 
         for u in list(EmeldUnit):
-            self.spec[u][1].add((self.PARENT_COLUMN, self.EMPTY_STR))
+            self.spec[u].add_occ((self.PARENT_COLUMN, self.EMPTY_STR))
 
         self.tables: Dict[EmeldUnit, pd.DataFrame] = {
             u: pd.DataFrame(
-                columns=pd.MultiIndex.from_tuples(self.spec[u][1], names=["type", "lang"]),
-                index=range(self.spec[u][0]),
+                columns=pd.MultiIndex.from_tuples(
+                    list(self.spec[u].fields.keys()),
+                    names=[Emeld.TYPE_ATTR, Emeld.LANG_ATTR]
+                ),
+                index=range(self.spec[u].occ),
                 dtype=str
             )
             for u in list(EmeldUnit)
@@ -114,20 +139,20 @@ class EmeldPopulateContentHandler(ContentHandler):
         # special case of XML element local name that can't be used as python name
         self.unitname_to_unitobj["interlinear-text"] = EmeldUnit.text
 
-        self.current_element : EmeldUnit = EmeldUnit.text
+        self.current_level : EmeldUnit = EmeldUnit.text
         self.waiting_text = False
 
     def startElement(self, name, attrs) -> None:
         if name in self.unitname_to_unitobj:
             u = self.unitname_to_unitobj[name]
             self.counter[u] += 1
-            self.current_element = u
+            self.current_level = u
 
             # On the new unit (but top-level unit text)
             # add a pointer to the id of the parent unit
             # (the word a morph belong to, etc)
             if name != EmeldUnit.text.name:
-                self.tables[self.current_element][self.PARENT_COLUMN, ""][self.counter[self.current_element]] = self.counter[self.current_element.next]
+                self.tables[self.current_level][self.PARENT_COLUMN, ""][self.counter[self.current_level]] = self.counter[self.current_level.next]
 
         if name == Emeld.ITEM_ELEMENT:
             self.current_type = attrs.get(Emeld.TYPE_ATTR)
@@ -136,12 +161,12 @@ class EmeldPopulateContentHandler(ContentHandler):
 
     def characters(self, content) -> None:
         if self.waiting_text:
-            self.tables[self.current_element][self.current_type, self.current_lang][self.counter[self.current_element]] = content
+            self.tables[self.current_level][self.current_type, self.current_lang][self.counter[self.current_level]] = content
             self.waiting_text = False
 
     def endElement(self, name) -> None:
         if name in self.unitname_to_unitobj:
-            self.current_element = self.unitname_to_unitobj[name].next
+            self.current_level = self.unitname_to_unitobj[name].next
 
     def get_tables(self) -> Dict[EmeldUnit, pd.DataFrame]:
         return self.tables

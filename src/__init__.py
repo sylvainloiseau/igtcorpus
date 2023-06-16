@@ -5,4 +5,4 @@ from .json import EmeldJson
 from .corpusobj_factory import UnitFactory, CorpusFactory
 from .conll import Conll
 from .corpustable import CorpusTable
-from .emeld_reader import EmeldReader
+from .emeld_reader import EmeldReader, EmeldSpecDict, LevelSpec

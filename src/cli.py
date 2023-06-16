@@ -7,6 +7,7 @@ from pathlib import Path
 from igtcorpus.elan import ElanCorpoAfr
 from igtcorpus.corpusobj import Corpus
 from igtcorpus.emeld import Emeld
+from igtcorpus.emeld_reader import EmeldReader, EmeldSpecDict, LevelSpec
 from igtcorpus.json import EmeldJson
 from igtcorpus.conll import Conll
 
@@ -61,9 +62,23 @@ def _igtc_callback(arg: argparse.Namespace) -> None:
 
 
 def _emeld_summary_callback(arg: argparse.Namespace) -> None:
-    corpus = Emeld.read(arg.file)
-    u = corpus.get_sub_units()
-    print(f"{len(u)} {type(u)}")
+    reader = EmeldReader(arg.file)
+    spec: EmeldSpecDict = reader._get_emeld_spec()
+    for level, lSpec in spec.items():
+        print(f"Unit '{level}':")
+        print(f"\t{lSpec.occ} occurrences")
+        print(f"\tfields:")
+        sorted_keys = sorted(list(lSpec.fields.keys()), key=lambda x : x[0])
+        for field in sorted_keys:
+            fOcc = lSpec.fields[field]
+            print(f"\t\t{field[0]}, {field[1]} ({fOcc} occurrences)")
+
+    # EmeldSpecDict = Dict[EmeldUnit, Tuple[NumberOccInt, Set[Tuple[TypeStr, LangStr]]]]
+
+
+    # corpus = Emeld.read(arg.file)
+    # u = corpus.get_sub_units()
+    # print(f"{len(u)} {type(u)}")
 
 
 def _exit_with_error_msg(msg: str) -> None:
