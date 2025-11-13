@@ -14,22 +14,69 @@ pip install git+https://github.com/sylvainloiseau/igtcorpus.git#egg=igtcorpus
 
 # Usage
 
+Two commnand line utilities are installed.
+
+## emeld: info about an Emeld document
+
+Print a summary of the fields used in the document and their number of occurrences.
+
+```console
+$ emeld summary tests/data/EmeldByFlex.xml
+Unit 'EmeldUnit.morph':
+        503 occurrences
+        fields:
+                cf, tww (502 occurrences)
+                gls, en (502 occurrences)
+                glsAppend, en (4 occurrences)
+                glsPrepend, en (4 occurrences)
+                hn, tww (231 occurrences)
+                msa, en (502 occurrences)
+                txt, tww (503 occurrences)
+                variantTypes, en (4 occurrences)
+Unit 'EmeldUnit.word':
+        366 occurrences
+        fields:
+                gls, en (220 occurrences)
+                pos, en (262 occurrences)
+                punct, tww (61 occurrences)
+                txt, tww (273 occurrences)
+Unit 'EmeldUnit.phrase':
+        0 occurrences
+        fields:
+                gls, en (31 occurrences)
+                gls, tpi (32 occurrences)
+                gls, tww (1 occurrences)
+                lit, en (32 occurrences)
+                note, tww (10 occurrences)
+                note, en (12 occurrences)
+                segnum, en (32 occurrences)
+Unit 'EmeldUnit.paragraph':
+        6 occurrences
+        fields:
+Unit 'EmeldUnit.text':
+        1 occurrences
+        fields:
+                title, en (1 occurrences)
+                title-abbreviation, en (1 occurrences)
+```
+
+## igtc: conversion between format
+
 Command line interface:
 
 ```console
 $ igtc -i input.xml -o output.json -f emeld -t json -l tww -m en
-$ # igtc --output=/Users/sloiseau/Downloads/conll --input=/Users/sloiseau/Downloads/2014T1.xml --fromformat=emeld --toformat=conll -l tww -m en
 ```
 
 See the doc:
 
 ```
 $ igtc -h
-usage: igtc [-h] [--verbose] --output OUTPUT --input INPUT --fromformat {json,emeld,elan} --toformat {json,emeld,conll}
+usage: igtc [-h] [--verbose] --output OUTPUT --input INPUT --fromformat {json,emeld,elan} --toformat {json,emeld,conll} [--olanguage OLANGUAGE] [--mlanguage MLANGUAGE]
 
 Utilities for converting between interlinear glossed texts formats.
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   --verbose, -v         output detailled information
   --output OUTPUT, -o OUTPUT

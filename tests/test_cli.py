@@ -11,7 +11,7 @@ LOGGER = logging.getLogger(__name__)
 class TestCli():
 
     def test_emeld_summary(self, capsys, caplog, tmp_path):
-        out = self._run_emeld(["emeld", "summary", "tests/data/test.emeld.xml"], capsys, caplog, tmp_path)
+        out = self._run_emeld(["emeld", "summary", "tests/data/EmeldByFlex.xml"], capsys, caplog, tmp_path)
         with capsys.disabled():
             print(out)
         assert "phrase" in out
@@ -39,8 +39,7 @@ class TestCli():
     def _run_cli(self, cmd_name, args, capsys, caplog, tmp_path):
         try:
             sys.argv = args
-            #cmd = getattr(cli, cmd_name)
-            #cmd()
+            LOGGER.info("Running: " + " ".join(args))
             globals()[cmd_name]()
         except SystemExit:
             captured = capsys.readouterr()

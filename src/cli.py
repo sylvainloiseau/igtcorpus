@@ -10,6 +10,7 @@ from igtcorpus.emeld import Emeld
 from igtcorpus.emeld_reader import EmeldReader, EmeldSpecDict, LevelSpec
 from igtcorpus.json import EmeldJson
 from igtcorpus.conll import Conll
+from igtcorpus.plaintext import PlainText
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.addHandler(logging.FileHandler(os.path.expanduser(Path("~/.igtc.log")), mode="w"))
@@ -37,9 +38,11 @@ def _igtc_callback(arg: argparse.Namespace) -> None:
     elif t == "conll":
         morph_txt_field="txt"
         morph_lemma_field="cf"
+        homonym_field = "hn"
         if arg.olanguage:
             morph_txt_field=morph_txt_field + "." + arg.olanguage
             morph_lemma_field=morph_lemma_field + "." + arg.olanguage
+            homonym_field=homonym_field + "." + arg.olanguage
 
         sentence_ft_field="gls"
         morph_pos_field="msa"
@@ -50,10 +53,43 @@ def _igtc_callback(arg: argparse.Namespace) -> None:
             morph_extra_field_str = morph_extra_field_str + "." + arg.mlanguage
 
         Conll.write(corpus, o,
+                text_name_field="title.en",
+                text_id_field="title-abbreviation.en",
                 morph_txt_field=morph_txt_field,
                 sentence_ft_field=sentence_ft_field,
                 morph_lemma_field=morph_lemma_field,
+                homonym_field=homonym_field,
                 #sentence_extra_field:List[str]=[],
+                sentence_id_field="segnum.fr",
+                morph_pos_field=morph_pos_field,
+                morph_extra_field = [("Gloss", morph_extra_field_str)]
+                )
+    elif t == "plain":
+        morph_txt_field="txt"
+        morph_lemma_field="cf"
+        homonym_field = "hn"
+        if arg.olanguage:
+            morph_txt_field=morph_txt_field + "." + arg.olanguage
+            morph_lemma_field=morph_lemma_field + "." + arg.olanguage
+            homonym_field=homonym_field + "." + arg.olanguage
+
+        sentence_ft_field="gls"
+        morph_pos_field="msa"
+        morph_extra_field_str = "gls"
+        if arg.mlanguage:
+            sentence_ft_field=sentence_ft_field + "." + arg.mlanguage
+            morph_pos_field=morph_pos_field + "." + arg.mlanguage
+            morph_extra_field_str = morph_extra_field_str + "." + arg.mlanguage
+
+        PlainText.write(corpus, o,
+                text_name_field="title.en",
+                text_id_field="title-abbreviation.en",
+                morph_txt_field=morph_txt_field,
+                sentence_ft_field=sentence_ft_field,
+                morph_lemma_field=morph_lemma_field,
+                homonym_field=homonym_field,
+                #sentence_extra_field:List[str]=[],
+                sentence_id_field="segnum.fr",
                 morph_pos_field=morph_pos_field,
                 morph_extra_field = [("Gloss", morph_extra_field_str)]
                 )
@@ -97,7 +133,7 @@ def igtc() -> None:
     #                     default=sys.stdout, type=argparse.FileType("w"))
     parser.add_argument('--input', '-i', help='input file', required=True)
     parser.add_argument('--fromformat', '-f', help='input file format', choices=["json", "emeld", "elan"], required=True, default="emeld")
-    parser.add_argument('--toformat', '-t', help='output file format', choices=["json", "emeld", "conll"], required=True, default="conll")
+    parser.add_argument('--toformat', '-t', help='output file format', choices=["json", "emeld", "conll","plain"], required=True, default="conll")
     parser.add_argument('--olanguage', '-l', help='Object language', required=False, default="")
     parser.add_argument('--mlanguage', '-m', help='Meta language', required=False, default="")
     parser.set_defaults(func=_igtc_callback)

@@ -4,7 +4,9 @@ from typing import List, Tuple
 import os.path 
 import logging
 
-class Conll():
+# TODO to much copied from Conll; refactor needed
+
+class PlainText():
 
   EMPTY_FIELD = "_"
   LOGGER = logging.getLogger(__name__)
@@ -25,7 +27,7 @@ class Conll():
             morph_pos_field="pos",
             morph_extra_field:List[Tuple[str, str]]=[]) -> None:
       """
-      Write a corpus as Conll-U document(s)
+      Write a corpus as plain text file(s)
 
       :param Corpus corpus: the corpus to be treated
       :param str outdir: name of the file
@@ -33,11 +35,11 @@ class Conll():
       :param str sentence_id_field: property holding the id of sentence unit. Suffixed to the text name. If None or not existing, the indice of the sentence is used.
       :param str sentence_text_field: the property holding the text of sentence unit. If None or non existing, the concatenation of the text of each morph unit is used.
       :param str sentence_ft_field: the property holding the free translation of sentence unit. If None or non existing, "_" is used.
-      :param str sentence_extra_field: other properties of sentence unit to be recopied in sentence headers of Conll document.
+      :param str sentence_extra_field: other properties of sentence unit to be recopied in sentence headers of plain text document.
       :param str morph_txt_field: property holding the text of token unit.
       :param str morph_lemma_field: property holding the lemma of token unit. If None or non existing, "_" is used
       :param str morph_pos_field: property holding the pos of token unit. If None or non existing, "_" is used
-      :param str morph_extra_field: other properties of morph units to be recopied in the extra (MISC) column for each morph. Each element of the list is a tuple (conll name / property).
+      :param str morph_extra_field: other properties of morph units to be recopied in the extra (MISC) column for each morph. Each element of the list is a tuple (name / property).
       """
 
       if not os.path.isdir(outdir):
@@ -45,9 +47,9 @@ class Conll():
 
       for ti, text in enumerate(corpus.get(Text)):
           text_properties = text.get_properties()
-          textid = Conll._get_prop_or_default(text_properties, text_id_field, str(ti))
-          texttitle = Conll._get_prop_or_default(text_properties, text_name_field, "")
-          filename = outdir + "/" + textid + ".conll"
+          textid = PlainText._get_prop_or_default(text_properties, text_id_field, str(ti))
+          texttitle = PlainText._get_prop_or_default(text_properties, text_name_field, "")
+          filename = outdir + "/" + textid + ".txt"
           f = open(filename, 'w')
           s_n = 0
           for pi, paragraph in enumerate(text.get(Paragraph)):
@@ -57,51 +59,51 @@ class Conll():
                   morphs_by_words: List[List[Morph]] = [w.get(Morph) for w in sentence.get(Word)]
                   morphs: List[Morph] = [m for ms in morphs_by_words for m in ms]
 
-                  origin_s_id = Conll._get_prop_or_default(
+                  origin_s_id = PlainText._get_prop_or_default(
                       sentence_properties,
                       sentence_id_field,
                       "/".join([str(pi + 1), str(si + 1)]) #sentence number is 1-based
                   )
 
-                  s_text = Conll._get_prop_or_default(sentence_properties, sentence_text_field, "")
-                  forms = Conll._get_forms(morphs, morph_txt_field)
-                  s_text = s_text or " ".join(txt for txt in forms)
-                  s_text_en = Conll._get_prop_or_default(sentence_properties, sentence_ft_field, Conll.EMPTY_FIELD)
+                  s_text = PlainText._get_prop_or_default(sentence_properties, sentence_text_field, "")
+                  morph_txt = PlainText._get_forms(morphs, morph_txt_field)
+                  s_text = s_text or " ".join(txt for txt in morph_txt)
+                  s_text_word_txt = " ".join(PlainText._get_prop_or_default(w.get_properties(), "txt") for w in sentence.get(Word))
+                  s_text_en = PlainText._get_prop_or_default(sentence_properties, sentence_ft_field, PlainText.EMPTY_FIELD)
 
-                  Conll._write_sentence_field(f, "sent_id", textid + "__" + str(s_n))
-                  Conll._write_sentence_field(f, "text", s_text)
-                  Conll._write_sentence_field(f, "text_en", s_text_en)
-                  Conll._write_sentence_field(f, "doc_id", textid)
-                  Conll._write_sentence_field(f, "doc_title", texttitle)
-                  Conll._write_sentence_field(f, "origin_s_id", origin_s_id)
-
+                  PlainText._write_sentence_field(f, "sent_id", textid + "__" + str(s_n))
+                  PlainText._write_sentence_field(f, "doc_id", textid)
+                  PlainText._write_sentence_field(f, "doc_title", texttitle)
+                  PlainText._write_sentence_field(f, "origin_s_id", origin_s_id)
                   for sfield in sentence_extra_field:
-                      sv = Conll._get_prop_or_default(sentence_properties, sfield, "_")
-                      Conll._write_sentence_field(f, sfield, sv)
+                      sv = PlainText._get_prop_or_default(sentence_properties, sfield, "_")
+                      PlainText._write_sentence_field(f, sfield, sv)
 
-                  for im, m in enumerate(morphs):
-                      props = m.get_properties()
-                      txt = forms[im]
-                      lemma = Conll._get_prop_or_empty(props, morph_lemma_field)
-                      homonym_index = Conll._get_prop_or_default(props, homonym_field, None)
-                      if homonym_index:
-                          lemma = lemma + "_" + homonym_index
+                  f.write("-W: " + s_text_word_txt + "\n")
+                  f.write("-M: ")
+                  for w in sentence.get(Word):
+                    morphs = "-".join(PlainText._get_prop_or_default(m.get_properties(), morph_txt_field) for m in w.get(Morph))
+                    f.write(f"{morphs} ")
+                  f.write("\n")
 
-                      pos = Conll._get_prop_or_empty(props, morph_pos_field)
-                      extra = Conll._get_extra(props, morph_extra_field)
-                      token_columns = [str(im + 1),
-                                    txt,
-                                    lemma,
-                                    pos,
-                                    Conll.EMPTY_FIELD,
-                                    Conll.EMPTY_FIELD,
-                                    Conll.EMPTY_FIELD,
-                                    Conll.EMPTY_FIELD,
-                                    Conll.EMPTY_FIELD,
-                                    extra
-                      ]
-                      Conll._write_token(f, token_columns)
-                  Conll._write_sentence_sep(f)
+                  f.write("L: ")
+                  for w in sentence.get(Word):
+                    lemma = [PlainText._get_prop_or_default(m.get_properties(), morph_lemma_field) for m in w.get(Morph)]
+                    homonym_index = [PlainText._get_prop_or_default(m.get_properties(), homonym_field, "") for m in w.get(Morph)]
+                    l = [l if hi =="" else l + "_" + hi for l, hi in zip(lemma, homonym_index)]
+                    l = "-".join(l)
+                    f.write(f"{l} ")
+                  f.write("\n")
+
+                  f.write("P: ")
+                  for w in sentence.get(Word):
+                    pos = "-".join(PlainText._get_prop_or_default(m.get_properties(), morph_pos_field) for m in w.get(Morph))
+                    f.write(f"{pos} ")
+                  f.write("\n")
+
+                  PlainText._write_line(f, "-T", s_text_en)
+                  f.write("\n")
+                  
           f.close()
 
   @staticmethod
@@ -114,18 +116,18 @@ class Conll():
         if morph_txt_field in ks:
             txt = p[morph_txt_field]
         else:
-            Conll.LOGGER.warning(f"No attribute {morph_txt_field} for morph {m}.")
+            PlainText.LOGGER.warning(f"No attribute {morph_txt_field} for morph {m}.")
             if "txt" in ks:
                 txt = p["txt"]
-                Conll.LOGGER.warning("Defaulting to 'txt'")
+                PlainText.LOGGER.warning("Defaulting to 'txt'")
             else:
                 tk = [si for si in p.keys() if si.startswith('txt')]
                 if len(tk) > 0:
                     txt = p[tk[0]]
-                    Conll.LOGGER.warning(f"Defaulting to '{tk[0]}'")
+                    PlainText.LOGGER.warning(f"Defaulting to '{tk[0]}'")
                 else:
-                    Conll.LOGGER.warning("No text found")
-                    txt = Conll.EMPTY_FIELD
+                    PlainText.LOGGER.warning("No text found")
+                    txt = PlainText.EMPTY_FIELD
         txts[mi] = txt
     return txts
 
@@ -138,21 +140,25 @@ class Conll():
 
   @staticmethod
   def _get_prop_or_empty(props:Properties, key:str):
-      return Conll._get_prop_or_default(props, key, Conll.EMPTY_FIELD)
+      return PlainText._get_prop_or_default(props, key, PlainText.EMPTY_FIELD)
 
   @staticmethod
   def _get_extra(prop:Properties, extra_field: List[Tuple[str, str]]):
       if len(extra_field) == 0:
-          return Conll.EMPTY_FIELD
+          return PlainText.EMPTY_FIELD
       tuples = list(filter(lambda x : x[1] in prop, extra_field))
       if len(tuples) == 0:
-          return Conll.EMPTY_FIELD
+          return PlainText.EMPTY_FIELD
       ps = {tuple[0]: prop[tuple[1]] for tuple in tuples}
       return '|'.join(key + "=" + value for key, value in ps.items())
 
   @staticmethod
   def _write_sentence_field(fhandler, field, value):
      fhandler.write(f"# {field} = {value}\n")
+
+  @staticmethod
+  def _write_line(fhandler, field, value):
+     fhandler.write(f"{field}: {value}\n")
 
   @staticmethod
   def _write_token(fhandler, cols):

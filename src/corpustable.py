@@ -7,7 +7,8 @@ from typing import Dict
 class CorpusTable():
 
     def __init__(self, tables: Dict[EmeldUnit, pd.DataFrame]):
-        self.tables = tables
-    
+        self._tables = tables
+
     def n(self, unit: EmeldUnit) -> int:
-        return self.tables[unit].shape[0]
+        return self._tables[unit].shape[0]
+
