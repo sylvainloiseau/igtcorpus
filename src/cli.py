@@ -9,6 +9,7 @@ from igtcorpus.corpusobj import Corpus
 from igtcorpus.emeld import Emeld
 from igtcorpus.emeld_reader import EmeldReader, EmeldSpecDict, LevelSpec
 from igtcorpus.json import EmeldJson
+from igtcorpus.grewjson import GrewJson
 from igtcorpus.conll import Conll
 from igtcorpus.plaintext import PlainText
 
@@ -33,6 +34,8 @@ def _igtc_callback(arg: argparse.Namespace) -> None:
 
     if t == "emeld":
         Emeld.write(corpus, o)
+    elif t == "grewjson":
+        GrewJson.write(corpus, o)
     elif t == "json":
         EmeldJson.write(corpus, o)
     elif t == "conll":
@@ -133,7 +136,7 @@ def igtc() -> None:
     #                     default=sys.stdout, type=argparse.FileType("w"))
     parser.add_argument('--input', '-i', help='input file', required=True)
     parser.add_argument('--fromformat', '-f', help='input file format', choices=["json", "emeld", "elan"], required=True, default="emeld")
-    parser.add_argument('--toformat', '-t', help='output file format', choices=["json", "emeld", "conll","plain"], required=True, default="conll")
+    parser.add_argument('--toformat', '-t', help='output file format', choices=["json", "emeld", "conll","plain", "grewjson"], required=True, default="conll")
     parser.add_argument('--olanguage', '-l', help='Object language', required=False, default="")
     parser.add_argument('--mlanguage', '-m', help='Meta language', required=False, default="")
     parser.set_defaults(func=_igtc_callback)

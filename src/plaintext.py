@@ -3,8 +3,9 @@ from igtcorpus.corpusobj import Corpus, Text, Paragraph, Sentence, Word, Morph, 
 from typing import List, Tuple
 import os.path 
 import logging
+import pandas as pd
 
-# TODO to much copied from Conll; refactor needed
+# TODO too much copied from Conll; refactor needed
 
 class PlainText():
 
@@ -68,7 +69,6 @@ class PlainText():
                   s_text = PlainText._get_prop_or_default(sentence_properties, sentence_text_field, "")
                   morph_txt = PlainText._get_forms(morphs, morph_txt_field)
                   s_text = s_text or " ".join(txt for txt in morph_txt)
-                  s_text_word_txt = " ".join(PlainText._get_prop_or_default(w.get_properties(), "txt") for w in sentence.get(Word))
                   s_text_en = PlainText._get_prop_or_default(sentence_properties, sentence_ft_field, PlainText.EMPTY_FIELD)
 
                   PlainText._write_sentence_field(f, "sent_id", textid + "__" + str(s_n))
@@ -79,19 +79,29 @@ class PlainText():
                       sv = PlainText._get_prop_or_default(sentence_properties, sfield, "_")
                       PlainText._write_sentence_field(f, sfield, sv)
 
-                  f.write("-W: " + s_text_word_txt + "\n")
+                  #df = pd.DataFrame(index=range(5),columns=range(len(morphs)))
+                  # pd.DataFrame(np.empty((3, 4), dtype = np.str))
+
+                 # word_txt: List[str] = [PlainText._get_prop_or_default(w.get_properties(), "txt") for w in sentence.get(Word)]
+                 # morphs:List[str] = [ "".join(PlainText._get_prop_or_default(m.get_properties(), morph_txt_field) for m in w.get(Morph)) for w in sentence.get(Word) ]
+                 # lemma:List[str] = [[PlainText._get_prop_or_default(m.get_properties(), morph_lemma_field) for m in w.get(Morph)] for w in sentence.get(Word)]
+                 # homonym_index:List[str] = [PlainText._get_prop_or_default(m.get_properties(), homonym_field, "") for m in w.get(Morph)]
+                 #   l = [l if hi =="" else l + "_" + hi for l, hi in zip(lemma, homonym_index)]
+                 #   l = "".join(l)
+ 
+                  f.write("-W: " + " ".join(word_txt) + "\n")
                   f.write("-M: ")
                   for w in sentence.get(Word):
-                    morphs = "-".join(PlainText._get_prop_or_default(m.get_properties(), morph_txt_field) for m in w.get(Morph))
+                    morphs:str = "".join(PlainText._get_prop_or_default(m.get_properties(), morph_txt_field) for m in w.get(Morph))
                     f.write(f"{morphs} ")
                   f.write("\n")
 
-                  f.write("L: ")
+                  f.write("-L: ")
                   for w in sentence.get(Word):
                     lemma = [PlainText._get_prop_or_default(m.get_properties(), morph_lemma_field) for m in w.get(Morph)]
                     homonym_index = [PlainText._get_prop_or_default(m.get_properties(), homonym_field, "") for m in w.get(Morph)]
                     l = [l if hi =="" else l + "_" + hi for l, hi in zip(lemma, homonym_index)]
-                    l = "-".join(l)
+                    l = "".join(l)
                     f.write(f"{l} ")
                   f.write("\n")
 
@@ -99,6 +109,12 @@ class PlainText():
                   for w in sentence.get(Word):
                     pos = "-".join(PlainText._get_prop_or_default(m.get_properties(), morph_pos_field) for m in w.get(Morph))
                     f.write(f"{pos} ")
+                  f.write("\n")
+
+                  f.write("G: ")
+                  for w in sentence.get(Word):
+                    gls = "-".join(PlainText._get_prop_or_default(m.get_properties(), "gls") for m in w.get(Morph))
+                    f.write(f"{gls} ")
                   f.write("\n")
 
                   PlainText._write_line(f, "-T", s_text_en)

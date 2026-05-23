@@ -34,11 +34,11 @@ setuptools.setup(
           'pytest>=6.2.5',
           'pympi-ling>=1.70.2',
           'attrs>=21.2.0',
-          'pandas>=1.3.5',
-          "ligt" #@git+ssh://git@github.sylvainloiseau.com/ligt
+          'pandas>=1.3.5'
+          #"ligt" #@git+ssh://git@github.sylvainloiseau.com/ligt
     ],
     # For dependencies not on pyPI:
-    dependency_links=['http://github.com/user/sylvainloiseau/tarball/master#egg=ligt-1.0'],
+#    dependency_links=['http://github.com/user/sylvainloiseau/tarball/master#egg=ligt-1.0'],
     python_requires=">=3.7",
     entry_points = {
         'console_scripts': [

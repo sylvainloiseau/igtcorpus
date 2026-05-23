@@ -8,3 +8,6 @@ dist/
 igttools.egg-info/
 tests/data/BEJ_MV_CONV_01_RICH.EAF.out
 tests/data/tiny.emeld.xml.out
+build/
+igtcorpus.egg-info/
+/bin/

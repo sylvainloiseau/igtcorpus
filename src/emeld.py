@@ -18,7 +18,7 @@ class Emeld():
   TYPE_ATTR = "type"
 
   MULTI_KEY_SEP = "/"
-  TYPE_LANG_SEPARATOR = "."
+  TYPE_LANG_SEPARATOR = "_"
   EMPTY_STRING = ""
   
   ORDERED_LEVEL = [
